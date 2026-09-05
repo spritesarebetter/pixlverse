@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#101216">
+  <title>Pixlverse · V9938/V9958 Sprite Editor</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="topbar">
+  <div><h1>Pixlverse</h1><p>V9938 / V9958 · MSX2 / MSX2+ Sprite Mode 2</p></div>
+  <div class="actions">
+    <button id="newBtn">New</button>
+    <button id="saveBtn">Save project</button>
+    <label class="button">Load project<input id="loadInput" type="file" accept=".json,.msxsprite" hidden></label>
+  </div>
+</header>
+
+<main class="layout">
+  <aside class="panel sidebar">
+    <section>
+      <h2>Target</h2>
+      <div class="formgrid">
+        <label>VDP<select id="vdp"><option>V9938</option><option>V9958</option></select></label>
+        <label>Screen<select id="screen"><option value="4">SCREEN 4</option><option value="5">SCREEN 5</option><option value="6">SCREEN 6</option><option value="7">SCREEN 7</option><option value="8">SCREEN 8</option></select></label>
+        <label>Sprite size<select id="spriteSize"><option value="16">16×16</option><option value="8">8×8</option></select></label>
+        <label>Magnify<select id="magnification"><option value="1">1×</option><option value="2">2×</option></select></label>
+      </div>
+    </section>
+
+    <section>
+      <div class="sectionrow"><h2>Frames</h2><button id="addFrame">＋</button></div>
+      <div id="frames" class="list"></div>
+      <div class="smallactions"><button id="dupFrame">Duplicate</button><button id="delFrame">Delete</button></div>
+    </section>
+
+    <section class="grow">
+      <div class="sectionrow"><h2>Hardware sprites</h2><button id="addSprite">＋</button></div>
+      <p class="hint">SAT order is priority: #0 wins. Maximum 32 entries.</p>
+      <div id="sprites" class="list scroll"></div>
+      <div class="smallactions"><button id="upSprite">↑ Priority</button><button id="downSprite">↓ Priority</button><button id="delSprite">Delete</button></div>
+    </section>
+  </aside>
+
+  <section class="workspace">
+    <section class="panel editorpanel">
+      <div class="sectionrow wrap">
+        <div><h2 id="editorTitle">Pattern editor</h2><p class="hint">1-bit pattern; color is selected per scanline.</p></div>
+        <div class="tools">
+          <button id="pencil" class="active">✎ Pencil</button><button id="eraser">⌫ Eraser</button>
+          <button id="left">←</button><button id="right">→</button><button id="up">↑</button><button id="down">↓</button>
+          <button id="flipH">Flip H</button><button id="flipV">Flip V</button><button id="invert">Invert</button><button id="clear">Clear</button>
+        </div>
+      </div>
+      <div class="editorbody">
+        <div>
+          <canvas id="editor" width="512" height="512"></canvas>
+          <p class="hint"><b>Draw:</b> left-click/drag · <b>Erase:</b> right-click/drag · touch/stylus supported · P/E switches tools.</p>
+        </div>
+        <div>
+          <h3>Palette</h3><div id="palette" class="palette"></div>
+          <p class="hint">Select a scanline, then choose its color.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel previewpanel">
+      <div class="sectionrow"><div><h2>VDP preview</h2><p id="previewInfo" class="hint"></p></div><label class="check"><input id="limit" type="checkbox" checked> hide 9th+ sprite</label></div>
+      <div class="previewbody">
+        <div class="screenbox"><canvas id="screenCanvas" width="256" height="212"></canvas></div>
+        <div><h3>Scanline load</h3><canvas id="loadCanvas" width="180" height="212"></canvas><p id="loadInfo" class="mono"></p></div>
+      </div>
+    </section>
+  </section>
+
+  <aside class="panel sidebar rightbar">
+    <section>
+      <h2>Sprite properties</h2>
+      <div class="formgrid two">
+        <label class="span2">Name<input id="name" type="text"></label>
+        <label>Pattern #<input id="pattern" type="number" min="0" max="255"></label>
+        <label>Enabled<input id="visible" type="checkbox"></label>
+        <label>X<input id="x" type="number" min="0" max="255"></label>
+        <label>Y<input id="y" type="number" min="-32" max="255"></label>
+      </div>
+    </section>
+
+    <section class="grow">
+      <div class="sectionrow"><h2>Sprite Color Table</h2><span id="lineBadge" class="badge">line 0</span></div>
+      <div class="linehead"><span>Line</span><span>Color</span><span>EC</span><span>CC</span><span>IC</span></div>
+      <div id="lines" class="linetable"></div>
+      <p class="hint">EC = shift −32 dots · CC = OR-color composition · IC = inhibit collision.</p>
+    </section>
+
+    <section>
+      <h2>Export current frame</h2>
+      <div class="exportgrid">
+        <button id="exportPatterns">patterns.bin</button><button id="exportColors">colors.bin</button>
+        <button id="exportSat">sat.bin</button><button id="exportAsm">Z80 .asm</button>
+      </div>
+      <p id="warnings" class="warning"></p>
+    </section>
+  </aside>
+</main>
+<footer><span>Pixlverse · hardware-first retro sprite editing</span><span id="status">Ready</span></footer>
+<script src="app.js"></script>
+</body>
+</html>
