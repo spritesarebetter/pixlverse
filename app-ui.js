@@ -1,0 +1,28 @@
+$('new').onclick=()=>confirm('Start a new project?')&&fresh();
+$('save').onclick=()=>dl(JSON.stringify(P,null,2),'pixlverse.msxsprite','application/json');
+$('load').onclick=()=>$('loadFile').click();
+$('loadFile').onchange=async e=>{let f=e.target.files[0];if(!f)return;try{P=migrate(JSON.parse(await f.text()));F=S=L=0;dirty();render();setStatus('Project loaded')}catch(err){alert('Invalid project')}};
+['vdp','screen','size','mag'].forEach(id=>$(id).onchange=e=>{P[id]=id==='vdp'?e.target.value:+e.target.value;L=0;dirty();render()});
+['canvasW','canvasH','sceneX','sceneY'].forEach(id=>$(id).onchange=e=>{let v=+e.target.value||0;if(id==='canvasW')v=C(v,8,256);if(id==='canvasH')v=C(v,8,212);P[id]=v;dirty();render()});
+$('addFrame').onclick=()=>{P.frames.push(clone(fr()));F=P.frames.length-1;fr().name='Frame '+F;S=0;L=0;dirty();render()};
+$('dupFrame').onclick=()=>{let f=clone(fr());f.name=fr().name+' copy';P.frames.splice(F+1,0,f);F++;S=0;L=0;dirty();render()};
+$('delFrame').onclick=()=>{if(P.frames.length>1){P.frames.splice(F,1);F=C(F,0,P.frames.length-1);S=L=0;dirty();render()}};
+$('addLayer').onclick=()=>{if(fr().sprites.length<32){let s=mkLayer(fr().sprites.length);s.pattern=sz()===16?((fr().sprites.length*4)&252):fr().sprites.length;fr().sprites.push(s);S=fr().sprites.length-1;L=0;dirty();render()}};
+$('dupLayer').onclick=()=>{if(fr().sprites.length<32){let s=clone(layer());s.name=layer().name+' copy';s.pattern=sz()===16?((fr().sprites.length*4)&252):fr().sprites.length;fr().sprites.splice(S+1,0,s);S++;dirty();render()}};
+$('layerDel').onclick=()=>{if(fr().sprites.length>1){fr().sprites.splice(S,1);S=C(S,0,fr().sprites.length-1);L=0;dirty();render()}};
+$('layerUp').onclick=()=>{if(S>0){let a=fr().sprites;[a[S-1],a[S]]=[a[S],a[S-1]];S--;dirty();render()}};
+$('layerDown').onclick=()=>{let a=fr().sprites;if(S<a.length-1){[a[S+1],a[S]]=[a[S],a[S+1]];S++;dirty();render()}};
+['name','pattern','layerX','layerY'].forEach(id=>$(id).oninput=e=>{let k=id==='layerX'?'ox':id==='layerY'?'oy':id;layer()[k]=id==='name'?e.target.value:+e.target.value||0;dirty();renderLayers();drawEditor();drawScene();warnings()});
+$('visible').onchange=e=>{layer().visible=e.target.checked;dirty();render()};
+$('pencil').onclick=()=>toolset('pencil');$('eraser').onclick=()=>toolset('eraser');
+$('left').onclick=()=>shiftBitmap(-1,0);$('right').onclick=()=>shiftBitmap(1,0);$('up').onclick=()=>shiftBitmap(0,-1);$('down').onclick=()=>shiftBitmap(0,1);
+$('moveL').onclick=()=>moveLayer(-1,0);$('moveR').onclick=()=>moveLayer(1,0);$('moveU').onclick=()=>moveLayer(0,-1);$('moveD').onclick=()=>moveLayer(0,1);
+$('flipH').onclick=()=>flip(true);$('flipV').onclick=()=>flip(false);
+$('invert').onclick=()=>{let n=sz();for(let y=0;y<n;y++)for(let x=0;x<n;x++)layer().mask[y][x]^=1;dirty();render()};
+$('clear').onclick=()=>{let n=sz();for(let y=0;y<n;y++)for(let x=0;x<n;x++)layer().mask[y][x]=0;dirty();render()};
+$('limit').onchange=drawScene;$('saveImage').onclick=savePreviewImage;
+let preview=$('screenCanvas');preview.oncontextmenu=e=>e.preventDefault();preview.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse'&&e.button!==0&&e.button!==2)return;e.preventDefault();changePreviewScale(e.button===2?-1:1)});
+$('expPat').onclick=()=>dl(patBytes(),'patterns.bin');$('expCol').onclick=()=>dl(colBytes(),'colors.bin');$('expSat').onclick=()=>dl(satBytes(),'sat.bin');
+$('expAsm').onclick=()=>{let arr=[...patBytes()],txt='; Pixlverse V9938/V9958 Sprite Mode 2\nsprite_patterns:\n'+arr.map((v,i)=>(i%16?'':'\n  db ')+'$'+v.toString(16).padStart(2,'0')).join(',').replace(/,\n/g,'\n');dl(txt,'sprites.asm','text/plain')};
+window.addEventListener('keydown',e=>{if(/INPUT|SELECT/.test(e.target.tagName))return;let k=e.key.toLowerCase();if(k==='p')toolset('pencil');if(k==='e')toolset('eraser')});
+try{P=migrate(JSON.parse(localStorage.pixlverse));if(!P.frames)throw 0;render();setStatus('Restored autosave')}catch(e){defaultProject();render();setStatus('Ready')}
