@@ -2,6 +2,10 @@
 
 A browser-based sprite editor for MSX2 / MSX2+ hardware using the Yamaha V9938 and V9958 VDPs.
 
+## 🚀 Launch Pixlverse
+
+**[Open Pixlverse in your browser](https://spritesarebetter.github.io/pixlverse/)**
+
 ## Current focus
 
 Pixlverse targets Sprite Mode 2 and keeps the hardware representation as the source of truth:
