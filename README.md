@@ -10,6 +10,13 @@ A browser-based sprite editor for MSX2 / MSX2+ hardware using the Yamaha V9938 a
 
 Pixlverse targets Sprite Mode 2 and keeps the hardware representation as the source of truth:
 
+- customizable composite artboard size
+- Aseprite-inspired separation of frames and layers
+- each layer maps to one real VDP hardware sprite / SAT entry
+- overlapping hardware-sprite layers for multicolor/composite characters
+- per-layer X/Y offsets inside the composite canvas
+- independent scene X/Y placement for the whole composite in the VDP preview
+- layer visibility, duplication, deletion and SAT priority ordering
 - 8×8 and 16×16 hardware sprites
 - V9938/V9958 1-bit sprite pattern masks
 - per-scanline color attributes
@@ -17,10 +24,10 @@ Pixlverse targets Sprite Mode 2 and keeps the hardware representation as the sou
 - up to 32 SAT entries
 - 8-sprites-per-scanline load visualization
 - optional simulation of hiding the 9th+ sprite
-- SAT priority ordering
 - multiple animation frames
 - project autosave in browser storage
-- `.msxsprite` project save/load
+- `.msxsprite` project save/load with migration from the earlier absolute-position format
+- PNG export of the VDP preview at the selected integer preview zoom
 - `patterns.bin`, `colors.bin`, `sat.bin` and Z80 assembly export
 - mouse, touch and stylus drawing
 
@@ -38,15 +45,25 @@ and visit `http://localhost:8000`.
 
 ## Drawing controls
 
-- Left-click / drag: draw
-- Right-click / drag: erase
+- Left-click / drag on the artboard: draw on the selected layer
+- Right-click / drag on the artboard: erase on the selected layer
 - `P`: pencil
 - `E`: eraser
+- Layer arrow controls: move the selected hardware sprite within the composite canvas
+- Bitmap arrow controls: shift pixels inside the selected hardware sprite
+
+## VDP preview controls
+
+- Left-click preview: zoom in by one integer step (1×, 2×, 3×, ...)
+- Right-click preview: zoom out by one integer step
+- Save image: export the current VDP preview as a nearest-neighbor PNG at the current preview zoom
 
 ## Hardware notes
+
+The customizable canvas is an editor-side composite artboard; it does not create non-standard VDP sprite sizes. Every layer remains a legal 8×8 or 16×16 hardware sprite. Layer order maps to SAT priority, with layer #0 having the highest priority.
 
 For 16×16 sprites, pattern numbers are aligned to four-pattern groups. Binary export uses the V9938 quadrant ordering and exports a 2048-byte pattern table, 512-byte Sprite Mode 2 color table, and 128-byte sprite attribute table for the current frame.
 
 ## Roadmap
 
-Planned improvements include undo/redo, editable V9938 palette registers, exact SCREEN 8 sprite color handling, collision visualization, stronger import tools, openMSX-oriented workflows, and richer animation management.
+Planned improvements include undo/redo, onion skinning, editable V9938 palette registers, exact SCREEN 8 sprite color handling, collision visualization, stronger import tools, openMSX-oriented workflows, drag-to-move layers, and richer animation management.
