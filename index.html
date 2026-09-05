@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Pixlverse — MSX2 Sprite Editor</title>
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="styles.css?v=20260906c">
 </head>
 <body>
 <header>
@@ -41,7 +41,17 @@
     <div>
       <h2>Palette</h2>
       <div id="palette" class="palette"></div>
-      <p class="hint">Color applies to the selected layer scanline.</p>
+      <div class="paletteeditor">
+        <div class="paletteeditorhead"><span id="paletteChip" class="palettechip"></span><strong id="paletteIndex">Color 15</strong><code id="paletteHex">#FFFFFF</code></div>
+        <div class="rgbinputs">
+          <label>R <input id="palR" type="number" min="0" max="7" step="1"></label>
+          <label>G <input id="palG" type="number" min="0" max="7" step="1"></label>
+          <label>B <input id="palB" type="number" min="0" max="7" step="1"></label>
+        </div>
+        <div id="paletteRgb8" class="mono">RGB 255, 255, 255</div>
+        <div class="buttonrow"><button id="resetPaletteColor">Reset color</button><button id="resetPalette">Reset palette</button></div>
+      </div>
+      <p class="hint">V9938/V9958 palette components are 3-bit RGB: values 0–7. Click a swatch to select/apply it.</p>
     </div>
   </aside>
 
@@ -59,7 +69,7 @@
         </div>
         <p class="hint">All visible layers are composited. Drawing changes only the selected hardware-sprite layer. Left-drag draws; right-drag erases. Editor zoom does not change the document.</p>
       </div>
-      <div class="editorwrap"><canvas id="editor" class="artboardshadow"></canvas></div>
+      <div id="editorWrap" class="editorwrap"><canvas id="editor" class="artboardshadow"></canvas></div>
     </div>
 
     <div class="panel previewpanel">
@@ -103,14 +113,14 @@
 
     <div>
       <h2>Export current frame</h2>
-      <div class="export"><button id="expPat">patterns.bin</button><button id="expCol">colors.bin</button><button id="expSat">sat.bin</button><button id="expAsm">Z80 .asm</button></div>
+      <div class="export"><button id="expPat">patterns.bin</button><button id="expCol">colors.bin</button><button id="expSat">sat.bin</button><button id="expPal">palette.bin</button><button id="expAsm">Z80 .asm</button></div>
       <p id="warn" class="warning"></p>
     </div>
   </aside>
 </main>
 <footer><span>Aseprite-inspired workflow · MSX hardware remains the source of truth</span><span id="status">Ready</span></footer>
-<script src="app-core.js"></script>
-<script src="app-canvas.js"></script>
-<script src="app-ui.js"></script>
+<script src="app-core.js?v=20260906c"></script>
+<script src="app-canvas.js?v=20260906c"></script>
+<script src="app-ui.js?v=20260906c"></script>
 </body>
 </html>
