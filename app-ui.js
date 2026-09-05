@@ -14,6 +14,7 @@ $('layerUp').onclick=()=>{if(S>0){let a=fr().sprites;[a[S-1],a[S]]=[a[S],a[S-1]]
 $('layerDown').onclick=()=>{let a=fr().sprites;if(S<a.length-1){[a[S+1],a[S]]=[a[S],a[S+1]];S++;dirty();render()}};
 ['name','pattern','layerX','layerY'].forEach(id=>$(id).oninput=e=>{let k=id==='layerX'?'ox':id==='layerY'?'oy':id;layer()[k]=id==='name'?e.target.value:+e.target.value||0;dirty();renderLayers();drawEditor();drawScene();warnings()});
 $('visible').onchange=e=>{layer().visible=e.target.checked;dirty();render()};
+$('editorZoomOut').onclick=()=>changeEditorZoom(-1);$('editorZoomIn').onclick=()=>changeEditorZoom(1);
 $('pencil').onclick=()=>toolset('pencil');$('eraser').onclick=()=>toolset('eraser');
 $('left').onclick=()=>shiftBitmap(-1,0);$('right').onclick=()=>shiftBitmap(1,0);$('up').onclick=()=>shiftBitmap(0,-1);$('down').onclick=()=>shiftBitmap(0,1);
 $('moveL').onclick=()=>moveLayer(-1,0);$('moveR').onclick=()=>moveLayer(1,0);$('moveU').onclick=()=>moveLayer(0,-1);$('moveD').onclick=()=>moveLayer(0,1);
@@ -24,5 +25,5 @@ $('limit').onchange=drawScene;$('saveImage').onclick=savePreviewImage;
 let preview=$('screenCanvas');preview.oncontextmenu=e=>e.preventDefault();preview.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse'&&e.button!==0&&e.button!==2)return;e.preventDefault();changePreviewScale(e.button===2?-1:1)});
 $('expPat').onclick=()=>dl(patBytes(),'patterns.bin');$('expCol').onclick=()=>dl(colBytes(),'colors.bin');$('expSat').onclick=()=>dl(satBytes(),'sat.bin');
 $('expAsm').onclick=()=>{let arr=[...patBytes()],txt='; Pixlverse V9938/V9958 Sprite Mode 2\nsprite_patterns:\n'+arr.map((v,i)=>(i%16?'':'\n  db ')+'$'+v.toString(16).padStart(2,'0')).join(',').replace(/,\n/g,'\n');dl(txt,'sprites.asm','text/plain')};
-window.addEventListener('keydown',e=>{if(/INPUT|SELECT/.test(e.target.tagName))return;let k=e.key.toLowerCase();if(k==='p')toolset('pencil');if(k==='e')toolset('eraser')});
+window.addEventListener('keydown',e=>{if(/INPUT|SELECT/.test(e.target.tagName))return;let k=e.key.toLowerCase();if(k==='p')toolset('pencil');if(k==='e')toolset('eraser');if(k==='+'||k==='=')changeEditorZoom(1);if(k==='-'||k==='_')changeEditorZoom(-1)});
 try{P=migrate(JSON.parse(localStorage.pixlverse));if(!P.frames)throw 0;render();setStatus('Restored autosave')}catch(e){defaultProject();render();setStatus('Ready')}
