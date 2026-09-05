@@ -1,8 +1,20 @@
-const EDITOR_ZOOMS=[0.25,0.5,1,2,3,4,6,8];
+const EDITOR_ZOOMS=[0.25,0.5,1,1.5,2,3,4,6,8];
+const EDITOR_BASE_CELL=30;
 let editorZoom=1;
 function editorRenderScale(){return C(Math.floor(4096/Math.max(aw(),ah())),4,30)}
-function applyEditorScale(){let c=$('editor'),cssCell=30*editorZoom;c.style.width=(aw()*cssCell)+'px';c.style.height=(ah()*cssCell)+'px';$('editorZoom').textContent=Math.round(editorZoom*100)+'%'}
-function changeEditorZoom(delta){let i=EDITOR_ZOOMS.indexOf(editorZoom);if(i<0)i=2;i=C(i+delta,0,EDITOR_ZOOMS.length-1);editorZoom=EDITOR_ZOOMS[i];applyEditorScale();setStatus('Editor zoom '+Math.round(editorZoom*100)+'%')}
+function applyEditorScale(){
+  let c=$('editor'),cssCell=EDITOR_BASE_CELL*editorZoom,w=aw()*cssCell,h=ah()*cssCell;
+  c.style.setProperty('width',w+'px','important');c.style.setProperty('height',h+'px','important');
+  c.style.setProperty('min-width',w+'px');c.style.setProperty('min-height',h+'px');
+  $('editorZoom').textContent=Math.round(editorZoom*100)+'%';
+}
+function changeEditorZoom(delta){
+  let c=$('editor'),wrap=$('editorWrap'),oldW=Math.max(c.getBoundingClientRect().width,1),oldH=Math.max(c.getBoundingClientRect().height,1);
+  let cx=(wrap.scrollLeft+wrap.clientWidth/2)/oldW,cy=(wrap.scrollTop+wrap.clientHeight/2)/oldH;
+  let i=EDITOR_ZOOMS.indexOf(editorZoom);if(i<0)i=2;i=C(i+delta,0,EDITOR_ZOOMS.length-1);editorZoom=EDITOR_ZOOMS[i];applyEditorScale();
+  requestAnimationFrame(()=>{let nw=c.getBoundingClientRect().width,nh=c.getBoundingClientRect().height;wrap.scrollLeft=Math.max(0,cx*nw-wrap.clientWidth/2);wrap.scrollTop=Math.max(0,cy*nh-wrap.clientHeight/2)});
+  setStatus('Editor zoom '+Math.round(editorZoom*100)+'%');
+}
 function artColor(x,y){let color=null;for(let s of fr().sprites){if(!s.visible)continue;let lx=x-s.ox,ly=y-s.oy;if(lx<0||ly<0||lx>=sz()||ly>=sz()||!s.mask[ly][lx])continue;let a=s.lines[ly];if(!a.color)continue;if(a.cc){if(color!==null)color=(color|a.color)&15}else if(color===null)color=a.color}return color}
 function drawEditor(){let c=$('editor'),g=c.getContext('2d'),w=aw(),h=ah();editorCell=editorRenderScale();c.width=w*editorCell;c.height=h*editorCell;for(let y=0;y<h;y++)for(let x=0;x<w;x++){g.fillStyle=(x+y)%2?'#171b22':'#20252d';g.fillRect(x*editorCell,y*editorCell,editorCell,editorCell);let col=artColor(x,y);if(col!==null){g.fillStyle=PAL[col];g.fillRect(x*editorCell+1,y*editorCell+1,editorCell-2,editorCell-2)}}g.strokeStyle='rgba(255,255,255,.09)';g.lineWidth=1;for(let x=0;x<=w;x++){g.beginPath();g.moveTo(x*editorCell+.5,0);g.lineTo(x*editorCell+.5,c.height);g.stroke()}for(let y=0;y<=h;y++){g.beginPath();g.moveTo(0,y*editorCell+.5);g.lineTo(c.width,y*editorCell+.5);g.stroke()}let s=layer();g.strokeStyle='#65d7c0';g.lineWidth=2;g.strokeRect(s.ox*editorCell+1,s.oy*editorCell+1,sz()*editorCell-2,sz()*editorCell-2);let lineY=(s.oy+L)*editorCell;g.strokeStyle='rgba(101,215,192,.65)';g.lineWidth=1;g.strokeRect(s.ox*editorCell+2,lineY+2,sz()*editorCell-4,editorCell-4);applyEditorScale()}
 function editorPoint(e){let r=$('editor').getBoundingClientRect();return{x:C(Math.floor((e.clientX-r.left)/r.width*aw()),0,aw()-1),y:C(Math.floor((e.clientY-r.top)/r.height*ah()),0,ah()-1)}}
@@ -30,3 +42,4 @@ function dl(data,name,type='application/octet-stream'){let a=document.createElem
 function patBytes(){let out=new Uint8Array(2048);for(let s of fr().sprites){let p=sz()===16?(s.pattern&252):s.pattern;if(sz()===8){for(let y=0;y<8;y++){let b=0;for(let x=0;x<8;x++)b|=s.mask[y][x]<<(7-x);out[p*8+y]=b}}else{let q=[[0,0],[0,8],[8,0],[8,8]];q.forEach(([ox,oy],qi)=>{for(let y=0;y<8;y++){let b=0;for(let x=0;x<8;x++)b|=s.mask[oy+y][ox+x]<<(7-x);out[(p+qi)*8+y]=b}})}}return out}
 function colBytes(){let o=new Uint8Array(512);fr().sprites.slice(0,32).forEach((s,i)=>{for(let y=0;y<16;y++){let a=s.lines[y],b=a.color&15;if(a.ec)b|=128;if(a.cc)b|=64;if(a.ic)b|=32;o[i*16+y]=b}});return o}
 function satBytes(){let o=new Uint8Array(128);fr().sprites.slice(0,32).forEach((s,i)=>{o[i*4]=(sy(s)-1)&255;o[i*4+1]=sx(s)&255;o[i*4+2]=sz()===16?(s.pattern&252):(s.pattern&255);o[i*4+3]=0});for(let i=fr().sprites.length;i<32;i++)o[i*4]=216;return o}
+function paletteBytes(){let o=new Uint8Array(32);P.palette.forEach((rgb,i)=>{o[i*2]=((rgb[0]&7)<<4)|(rgb[2]&7);o[i*2+1]=rgb[1]&7});return o}
