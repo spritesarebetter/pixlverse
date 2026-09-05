@@ -1,109 +1,18 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#101216">
-  <title>Pixlverse · V9938/V9958 Sprite Editor</title>
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-<header class="topbar">
-  <div><h1>Pixlverse</h1><p>V9938 / V9958 · MSX2 / MSX2+ Sprite Mode 2</p></div>
-  <div class="actions">
-    <button id="newBtn">New</button>
-    <button id="saveBtn">Save project</button>
-    <label class="button">Load project<input id="loadInput" type="file" accept=".json,.msxsprite" hidden></label>
-  </div>
-</header>
-
-<main class="layout">
-  <aside class="panel sidebar">
-    <section>
-      <h2>Target</h2>
-      <div class="formgrid">
-        <label>VDP<select id="vdp"><option>V9938</option><option>V9958</option></select></label>
-        <label>Screen<select id="screen"><option value="4">SCREEN 4</option><option value="5">SCREEN 5</option><option value="6">SCREEN 6</option><option value="7">SCREEN 7</option><option value="8">SCREEN 8</option></select></label>
-        <label>Sprite size<select id="spriteSize"><option value="16">16×16</option><option value="8">8×8</option></select></label>
-        <label>Magnify<select id="magnification"><option value="1">1×</option><option value="2">2×</option></select></label>
-      </div>
-    </section>
-
-    <section>
-      <div class="sectionrow"><h2>Frames</h2><button id="addFrame">＋</button></div>
-      <div id="frames" class="list"></div>
-      <div class="smallactions"><button id="dupFrame">Duplicate</button><button id="delFrame">Delete</button></div>
-    </section>
-
-    <section class="grow">
-      <div class="sectionrow"><h2>Hardware sprites</h2><button id="addSprite">＋</button></div>
-      <p class="hint">SAT order is priority: #0 wins. Maximum 32 entries.</p>
-      <div id="sprites" class="list scroll"></div>
-      <div class="smallactions"><button id="upSprite">↑ Priority</button><button id="downSprite">↓ Priority</button><button id="delSprite">Delete</button></div>
-    </section>
-  </aside>
-
-  <section class="workspace">
-    <section class="panel editorpanel">
-      <div class="sectionrow wrap">
-        <div><h2 id="editorTitle">Pattern editor</h2><p class="hint">1-bit pattern; color is selected per scanline.</p></div>
-        <div class="tools">
-          <button id="pencil" class="active">✎ Pencil</button><button id="eraser">⌫ Eraser</button>
-          <button id="left">←</button><button id="right">→</button><button id="up">↑</button><button id="down">↓</button>
-          <button id="flipH">Flip H</button><button id="flipV">Flip V</button><button id="invert">Invert</button><button id="clear">Clear</button>
-        </div>
-      </div>
-      <div class="editorbody">
-        <div>
-          <canvas id="editor" width="512" height="512"></canvas>
-          <p class="hint"><b>Draw:</b> left-click/drag · <b>Erase:</b> right-click/drag · touch/stylus supported · P/E switches tools.</p>
-        </div>
-        <div>
-          <h3>Palette</h3><div id="palette" class="palette"></div>
-          <p class="hint">Select a scanline, then choose its color.</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="panel previewpanel">
-      <div class="sectionrow"><div><h2>VDP preview</h2><p id="previewInfo" class="hint"></p></div><label class="check"><input id="limit" type="checkbox" checked> hide 9th+ sprite</label></div>
-      <div class="previewbody">
-        <div class="screenbox"><canvas id="screenCanvas" width="256" height="212"></canvas></div>
-        <div><h3>Scanline load</h3><canvas id="loadCanvas" width="180" height="212"></canvas><p id="loadInfo" class="mono"></p></div>
-      </div>
-    </section>
-  </section>
-
-  <aside class="panel sidebar rightbar">
-    <section>
-      <h2>Sprite properties</h2>
-      <div class="formgrid two">
-        <label class="span2">Name<input id="name" type="text"></label>
-        <label>Pattern #<input id="pattern" type="number" min="0" max="255"></label>
-        <label>Enabled<input id="visible" type="checkbox"></label>
-        <label>X<input id="x" type="number" min="0" max="255"></label>
-        <label>Y<input id="y" type="number" min="-32" max="255"></label>
-      </div>
-    </section>
-
-    <section class="grow">
-      <div class="sectionrow"><h2>Sprite Color Table</h2><span id="lineBadge" class="badge">line 0</span></div>
-      <div class="linehead"><span>Line</span><span>Color</span><span>EC</span><span>CC</span><span>IC</span></div>
-      <div id="lines" class="linetable"></div>
-      <p class="hint">EC = shift −32 dots · CC = OR-color composition · IC = inhibit collision.</p>
-    </section>
-
-    <section>
-      <h2>Export current frame</h2>
-      <div class="exportgrid">
-        <button id="exportPatterns">patterns.bin</button><button id="exportColors">colors.bin</button>
-        <button id="exportSat">sat.bin</button><button id="exportAsm">Z80 .asm</button>
-      </div>
-      <p id="warnings" class="warning"></p>
-    </section>
-  </aside>
-</main>
-<footer><span>Pixlverse · hardware-first retro sprite editing</span><span id="status">Ready</span></footer>
-<script src="app.js"></script>
-</body>
-</html>
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Pixlverse — MSX2 Sprite Editor</title><style>
+:root{color-scheme:dark;font-family:system-ui,sans-serif;--bg:#101216;--p:#191d24;--p2:#222833;--ln:#343c4b;--tx:#eef2f7;--mu:#97a3b6;--ac:#65d7c0;--wa:#f3c96b}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);min-width:980px}button,input,select{font:inherit}button{background:var(--p2);color:var(--tx);border:1px solid var(--ln);border-radius:6px;padding:7px 9px;cursor:pointer}button:hover,button.on{border-color:var(--ac)}header,footer{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:#141820;border-color:var(--ln)}header{border-bottom:1px solid var(--ln)}footer{border-top:1px solid var(--ln);font-size:11px;color:var(--mu)}h1{font-size:19px;margin:0}h2{font-size:14px;margin:0 0 9px}h3{font-size:12px;color:var(--mu)}p{margin:4px 0}.sub,.hint{font-size:11px;color:var(--mu)}main{display:grid;grid-template-columns:250px minmax(520px,1fr) 330px;gap:10px;padding:10px;height:calc(100vh - 104px)}.panel{background:var(--p);border:1px solid var(--ln);border-radius:9px;padding:12px;overflow:auto}.mid{display:flex;flex-direction:column;gap:10px;overflow:auto}.grow{flex:1}.section{padding-bottom:12px;margin-bottom:12px;border-bottom:1px solid var(--ln)}.row{display:flex;align-items:center;justify-content:space-between;gap:8px}.wrap{flex-wrap:wrap}.grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}.grid label{font-size:11px;color:var(--mu);display:flex;flex-direction:column;gap:4px}.grid input,.grid select{width:100%;background:#10141b;color:var(--tx);border:1px solid var(--ln);border-radius:6px;padding:6px}.list{display:flex;flex-direction:column;gap:5px}.item{padding:7px;border:1px solid var(--ln);border-radius:6px;background:#151920;cursor:pointer;font-size:12px}.item.sel{border-color:var(--ac)}.tools{display:flex;gap:5px;flex-wrap:wrap}.editorbody{display:grid;grid-template-columns:minmax(420px,512px) 120px;gap:12px}canvas{image-rendering:pixelated}#editor{width:min(100%,512px);height:auto;aspect-ratio:1;background:#0e1117;border:1px solid var(--ln);touch-action:none;user-select:none;cursor:crosshair}.palette{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}.sw{aspect-ratio:1;border:2px solid #495365;border-radius:5px;padding:0}.sw.on{border-color:white}.preview{display:grid;grid-template-columns:minmax(420px,1fr) 190px;gap:12px}.screenbox{background:#090b0f;border:1px solid var(--ln);padding:8px;display:flex;justify-content:center;align-items:center}.screenbox canvas{width:min(100%,512px);height:auto;aspect-ratio:256/212}.linehead,.linerow{display:grid;grid-template-columns:34px 1fr 28px 28px 28px;gap:4px;align-items:center}.linehead{font-size:10px;color:var(--mu)}.linerow{font-size:10px;padding:3px;border-radius:4px}.linerow.sel{outline:1px solid var(--ac)}.linerow select{font-size:10px;background:#10141b;color:var(--tx);border:1px solid var(--ln);padding:2px}.badge{font-size:10px;color:var(--ac)}.export{display:grid;grid-template-columns:1fr 1fr;gap:6px}.warning{color:var(--wa);font-size:10px}.mono{font:11px ui-monospace,monospace;color:var(--mu)}
+</style></head><body>
+<header><div><h1>Pixlverse</h1><p class="sub">V9938 / V9958 · MSX2 / MSX2+ Sprite Mode 2</p></div><div class="tools"><button id="new">New</button><button id="save">Save project</button><button id="load">Load project</button><input id="loadFile" type="file" accept=".json,.msxsprite" hidden></div></header>
+<main><aside class="panel"><div class="section"><h2>Target</h2><div class="grid"><label>VDP<select id="vdp"><option>V9938</option><option>V9958</option></select></label><label>Screen<select id="screen"><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option></select></label><label>Sprite size<select id="size"><option value="16">16×16</option><option value="8">8×8</option></select></label><label>Magnify<select id="mag"><option value="1">1×</option><option value="2">2×</option></select></label></div></div><div class="section"><div class="row"><h2>Frames</h2><button id="addFrame">＋</button></div><div id="frames" class="list"></div></div><div class="section"><div class="row"><h2>Hardware sprites</h2><button id="addSprite">＋</button></div><p class="hint">SAT priority: #0 highest · max 32</p><div id="sprites" class="list"></div><div class="tools" style="margin-top:6px"><button id="sprUp">↑</button><button id="sprDown">↓</button><button id="sprDel">Delete</button></div></div></aside>
+<section class="mid"><div class="panel"><div class="row wrap"><div><h2 id="title">Pattern editor</h2><p class="hint">1-bit mask; scanline color stored separately.</p></div><div class="tools"><button id="pencil" class="on">✎ Pencil</button><button id="eraser">⌫ Eraser</button><button id="left">←</button><button id="right">→</button><button id="up">↑</button><button id="down">↓</button><button id="flipH">Flip H</button><button id="flipV">Flip V</button><button id="invert">Invert</button><button id="clear">Clear</button></div></div><div class="editorbody"><div><canvas id="editor" width="512" height="512"></canvas><p class="hint"><b>Draw:</b> left-drag · <b>Erase:</b> right-drag · P/E switch tools</p></div><div><h3>Palette</h3><div id="palette" class="palette"></div></div></div></div>
+<div class="panel"><div class="row"><div><h2>VDP scene preview</h2><p id="previewInfo" class="hint"></p></div><label class="hint"><input id="limit" type="checkbox" checked> hide 9th+ sprite</label></div><div class="preview"><div class="screenbox"><canvas id="screenCanvas" width="256" height="212"></canvas></div><div><h3>Scanline load</h3><canvas id="loadCanvas" width="180" height="212" style="border:1px solid var(--ln)"></canvas><p id="loadInfo" class="mono"></p></div></div></div></section>
+<aside class="panel"><div class="section"><h2>Sprite properties</h2><div class="grid"><label>Name<input id="name"></label><label>Pattern #<input id="pattern" type="number" min="0" max="255"></label><label>X<input id="x" type="number" min="0" max="255"></label><label>Y<input id="y" type="number" min="-32" max="255"></label><label><span>Enabled</span><input id="visible" type="checkbox"></label></div></div><div class="section"><div class="row"><h2>Sprite Color Table</h2><span id="lineBadge" class="badge">line 0</span></div><div class="linehead"><span>Line</span><span>Color</span><span>EC</span><span>CC</span><span>IC</span></div><div id="lines"></div><p class="hint">EC = −32 dots · CC = OR-color · IC = inhibit collision.</p></div><div><h2>Export current frame</h2><div class="export"><button id="expPat">patterns.bin</button><button id="expCol">colors.bin</button><button id="expSat">sat.bin</button><button id="expAsm">Z80 .asm</button></div><p id="warn" class="warning"></p></div></aside></main><footer><span>Hardware-first retro sprite editing</span><span id="status">Ready</span></footer>
+<script>
+'use strict';const PAL=['#000000','#000000','#3eb849','#74d07d','#5955e0','#8076f1','#b95e51','#65dbef','#db6559','#ff897d','#ccc35e','#ded087','#3aa241','#b766b5','#cccccc','#ffffff'];const $=x=>document.getElementById(x),C=(v,a,b)=>Math.max(a,Math.min(b,v)),clone=o=>JSON.parse(JSON.stringify(o));let P,F=0,S=0,L=0,drag=false,tool='pencil',last=null;
+const mask=()=>Array.from({length:16},()=>Array(16).fill(0)),lines=()=>Array.from({length:16},(_,i)=>({color:i<3?15:i<8?6:i<13?8:4,ec:false,cc:false,ic:false}));function mkSprite(i){let m=mask(),n=P?.size||16;for(let y=2;y<n-2;y++)for(let x=2;x<n-2;x++)if(x==2||x==n-3||y==2||y==n-3)m[y][x]=1;return{name:'Sprite '+i,x:96+i*6,y:80,pattern:n==16?i*4:i,visible:true,mask:m,lines:lines()}}function mkFrame(i){return{name:'Frame '+i,sprites:[mkSprite(0)]}}function fresh(){P={vdp:'V9938',screen:5,size:16,mag:1,frames:[]};P.frames=[mkFrame(0)];F=S=L=0;render();setStatus('New project')}const fr=()=>P.frames[F],sp=()=>fr().sprites[S],sz=()=>+P.size,mg=()=>+P.mag;function setStatus(t){$('status').textContent=t}function dirty(){setStatus('Modified');try{localStorage.pixlverse=JSON.stringify(P)}catch(e){}}
+function render(){['vdp','screen','size','mag'].forEach(id=>$(id).value=P[id]);renderFrames();renderSprites();props();lineTable();palette();drawEditor();drawScene();loadGraph();warnings()}function renderFrames(){let h=$('frames');h.innerHTML='';P.frames.forEach((f,i)=>{let d=document.createElement('div');d.className='item'+(i==F?' sel':'');d.textContent=i+' · '+f.name;d.onclick=()=>{F=i;S=0;L=0;render()};h.appendChild(d)})}function renderSprites(){let h=$('sprites');h.innerHTML='';fr().sprites.forEach((s,i)=>{let d=document.createElement('div');d.className='item'+(i==S?' sel':'');d.textContent='#'+i+' '+s.name+' · x'+s.x+' y'+s.y;d.onclick=()=>{S=i;L=0;render()};h.appendChild(d)});$('addSprite').disabled=fr().sprites.length>=32}
+function props(){let s=sp();$('name').value=s.name;$('pattern').value=s.pattern;$('x').value=s.x;$('y').value=s.y;$('visible').checked=s.visible;$('title').textContent='Pattern editor · '+s.name+' · SAT #'+S;$('previewInfo').textContent=P.vdp+' · SCREEN '+P.screen+' · '+sz()+'×'+sz()+' · '+mg()+'×'}function palette(){let h=$('palette');h.innerHTML='';PAL.forEach((c,i)=>{let b=document.createElement('button');b.className='sw'+(sp().lines[L].color==i?' on':'');b.style.background=c;b.title='Color '+i;b.onclick=()=>{sp().lines[L].color=i;dirty();render()};h.appendChild(b)})}function lineTable(){let h=$('lines');h.innerHTML='';L=C(L,0,sz()-1);$('lineBadge').textContent='line '+L;for(let i=0;i<sz();i++){let a=sp().lines[i],r=document.createElement('div');r.className='linerow'+(i==L?' sel':'');r.innerHTML='<span>'+String(i).padStart(2,'0')+'</span><select>'+PAL.map((_,j)=>'<option value="'+j+'"'+(a.color==j?' selected':'')+'>'+j+'</option>').join('')+'</select><input type="checkbox" '+(a.ec?'checked':'')+'><input type="checkbox" '+(a.cc?'checked':'')+'><input type="checkbox" '+(a.ic?'checked':'')+'>';r.onclick=e=>{if(e.target.tagName=='DIV'||e.target.tagName=='SPAN'){L=i;render()}};let q=r.querySelectorAll('input'),sel=r.querySelector('select');sel.onchange=()=>{a.color=+sel.value;L=i;dirty();render()};['ec','cc','ic'].forEach((k,j)=>q[j].onchange=()=>{a[k]=q[j].checked;L=i;dirty();render()});h.appendChild(r)}}
+function drawEditor(){let c=$('editor'),g=c.getContext('2d'),n=sz(),cell=512/n,s=sp();g.fillStyle='#0e1117';g.fillRect(0,0,512,512);for(let y=0;y<n;y++)for(let x=0;x<n;x++){g.fillStyle=(x+y)%2?'#151a22':'#11161d';g.fillRect(x*cell,y*cell,cell,cell);if(s.mask[y][x]){g.fillStyle=s.lines[y].color?PAL[s.lines[y].color]:'rgba(255,255,255,.15)';g.fillRect(x*cell+1,y*cell+1,cell-2,cell-2)}}g.strokeStyle='rgba(255,255,255,.14)';g.lineWidth=1;for(let i=0;i<=n;i++){g.beginPath();g.moveTo(i*cell,0);g.lineTo(i*cell,512);g.stroke();g.beginPath();g.moveTo(0,i*cell);g.lineTo(512,i*cell);g.stroke()}g.strokeStyle='#65d7c0';g.lineWidth=3;g.strokeRect(1,L*cell+1,510,cell-2)}function covers(s,y){return s.visible&&y>=s.y&&y<s.y+sz()*mg()}function drawScene(){let c=$('screenCanvas'),g=c.getContext('2d'),arr=fr().sprites;g.fillStyle='#101018';g.fillRect(0,0,256,212);for(let y=0;y<212;y++){let cand=arr.filter(s=>covers(s,y));if($('limit').checked)cand=cand.slice(0,8);let cols=Array(256).fill(null);for(let s of cand){let py=C(Math.floor((y-s.y)/mg()),0,sz()-1),a=s.lines[py],base=s.x+(a.ec?-32:0);for(let x=0;x<256;x++){let px=Math.floor((x-base)/mg());if(px<0||px>=sz()||!s.mask[py][px]||!a.color)continue;if(a.cc){if(cols[x]!=null)cols[x]=(cols[x]|a.color)&15}else if(cols[x]==null)cols[x]=a.color}}for(let x=0;x<256;x++)if(cols[x]!=null){g.fillStyle=PAL[cols[x]];g.fillRect(x,y,1,1)}}let s=sp();g.strokeStyle='rgba(255,255,255,.6)';g.strokeRect(s.x+.5,s.y+.5,sz()*mg(),sz()*mg())}function loadGraph(){let c=$('loadCanvas'),g=c.getContext('2d'),mx=0,over=0;g.fillStyle='#10141b';g.fillRect(0,0,180,212);for(let y=0;y<212;y++){let n=fr().sprites.filter(s=>covers(s,y)).length;mx=Math.max(mx,n);if(n>8)over++;g.fillStyle=n>8?'#f3c96b':'#65d7c0';g.fillRect(0,y,Math.min(170,n*16),1)}$('loadInfo').textContent='peak '+mx+'/8\n'+over+' overloaded lines'}function warnings(){let bad=0;for(let y=0;y<212;y++)if(fr().sprites.filter(s=>covers(s,y)).length>8)bad++;$('warn').textContent=bad?'⚠ '+bad+' scanlines exceed 8 sprites':''}
+function cell(e){let r=$('editor').getBoundingClientRect(),n=sz();return{x:C(Math.floor((e.clientX-r.left)/r.width*n),0,n-1),y:C(Math.floor((e.clientY-r.top)/r.height*n),0,n-1)}}function put(a,b,v){let x0=a.x,y0=a.y,x1=b.x,y1=b.y,dx=Math.abs(x1-x0),sx=x0<x1?1:-1,dy=-Math.abs(y1-y0),sy=y0<y1?1:-1,er=dx+dy;for(;;){sp().mask[y0][x0]=v;if(x0==x1&&y0==y1)break;let e=2*er;if(e>=dy){er+=dy;x0+=sx}if(e<=dx){er+=dx;y0+=sy}}dirty()}function toolset(t){tool=t;$('pencil').classList.toggle('on',t=='pencil');$('eraser').classList.toggle('on',t=='eraser')}let ed=$('editor');ed.oncontextmenu=e=>e.preventDefault();ed.addEventListener('pointerdown',e=>{if(e.pointerType=='mouse'&&e.button!=0&&e.button!=2)return;e.preventDefault();drag=true;let c=cell(e);last=c;L=c.y;put(c,c,e.button==2||tool=='eraser'?0:1);ed.setPointerCapture?.(e.pointerId);render()});ed.addEventListener('pointermove',e=>{if(!drag)return;e.preventDefault();let c=cell(e);put(last,c,tool=='eraser'||(e.pointerType=='mouse'&&(e.buttons&2))?0:1);last=c;L=c.y;render()});['pointerup','pointercancel','lostpointercapture'].forEach(ev=>ed.addEventListener(ev,()=>{drag=false;last=null}));
+function shift(dx,dy){let n=sz(),m=mask();for(let y=0;y<n;y++)for(let x=0;x<n;x++)m[(y+dy+n)%n][(x+dx+n)%n]=sp().mask[y][x];sp().mask=m;dirty();render()}function flip(h){let n=sz(),m=mask();for(let y=0;y<n;y++)for(let x=0;x<n;x++)m[h?y:n-1-y][h?n-1-x:x]=sp().mask[y][x];sp().mask=m;dirty();render()}function dl(data,name,type='application/octet-stream'){let a=document.createElement('a'),b=data instanceof Uint8Array?new Blob([data],{type}):new Blob([data],{type});a.href=URL.createObjectURL(b);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500)}function patBytes(){let out=new Uint8Array(2048);for(let s of fr().sprites){let p=sz()==16?(s.pattern&252):s.pattern;if(sz()==8){for(let y=0;y<8;y++){let b=0;for(let x=0;x<8;x++)b|=s.mask[y][x]<<(7-x);out[p*8+y]=b}}else{let q=[[0,0],[0,8],[8,0],[8,8]];q.forEach(([ox,oy],qi)=>{for(let y=0;y<8;y++){let b=0;for(let x=0;x<8;x++)b|=s.mask[oy+y][ox+x]<<(7-x);out[(p+qi)*8+y]=b}})}}return out}function colBytes(){let o=new Uint8Array(512);fr().sprites.slice(0,32).forEach((s,i)=>{for(let y=0;y<16;y++){let a=s.lines[y],b=a.color&15;if(a.ec)b|=128;if(a.cc)b|=64;if(a.ic)b|=32;o[i*16+y]=b}});return o}function satBytes(){let o=new Uint8Array(128);fr().sprites.slice(0,32).forEach((s,i)=>{o[i*4]=(s.y-1)&255;o[i*4+1]=s.x&255;o[i*4+2]=sz()==16?(s.pattern&252):(s.pattern&255);o[i*4+3]=0});for(let i=fr().sprites.length;i<32;i++)o[i*4]=216;return o}
+$('new').onclick=()=>confirm('Start a new project?')&&fresh();$('save').onclick=()=>dl(JSON.stringify(P,null,2),'pixlverse.msxsprite','application/json');$('load').onclick=()=>$('loadFile').click();$('loadFile').onchange=async e=>{let f=e.target.files[0];if(!f)return;try{P=JSON.parse(await f.text());F=S=L=0;render();setStatus('Project loaded')}catch(err){alert('Invalid project')}};['vdp','screen','size','mag'].forEach(id=>$(id).onchange=e=>{P[id]=id=='vdp'?e.target.value:+e.target.value;L=0;dirty();render()});$('addFrame').onclick=()=>{P.frames.push(clone(fr()));F=P.frames.length-1;fr().name='Frame '+F;S=0;dirty();render()};$('addSprite').onclick=()=>{if(fr().sprites.length<32){fr().sprites.push(mkSprite(fr().sprites.length));S=fr().sprites.length-1;dirty();render()}};$('sprDel').onclick=()=>{if(fr().sprites.length>1){fr().sprites.splice(S,1);S=C(S,0,fr().sprites.length-1);dirty();render()}};$('sprUp').onclick=()=>{if(S>0){let a=fr().sprites;[a[S-1],a[S]]=[a[S],a[S-1]];S--;dirty();render()}};$('sprDown').onclick=()=>{let a=fr().sprites;if(S<a.length-1){[a[S+1],a[S]]=[a[S],a[S+1]];S++;dirty();render()}};['name','pattern','x','y'].forEach(id=>$(id).oninput=e=>{sp()[id=='name'?'name':id]=id=='name'?e.target.value:+e.target.value||0;dirty();renderSprites();drawScene();warnings()});$('visible').onchange=e=>{sp().visible=e.target.checked;dirty();render()};$('pencil').onclick=()=>toolset('pencil');$('eraser').onclick=()=>toolset('eraser');$('left').onclick=()=>shift(-1,0);$('right').onclick=()=>shift(1,0);$('up').onclick=()=>shift(0,-1);$('down').onclick=()=>shift(0,1);$('flipH').onclick=()=>flip(1);$('flipV').onclick=()=>flip(0);$('invert').onclick=()=>{let n=sz();for(let y=0;y<n;y++)for(let x=0;x<n;x++)sp().mask[y][x]^=1;dirty();render()};$('clear').onclick=()=>{let n=sz();for(let y=0;y<n;y++)for(let x=0;x<n;x++)sp().mask[y][x]=0;dirty();render()};$('limit').onchange=drawScene;$('expPat').onclick=()=>dl(patBytes(),'patterns.bin');$('expCol').onclick=()=>dl(colBytes(),'colors.bin');$('expSat').onclick=()=>dl(satBytes(),'sat.bin');$('expAsm').onclick=()=>{let arr=[...patBytes()],txt='; Pixlverse V9938/V9958 Sprite Mode 2\nsprite_patterns:\n'+arr.map((v,i)=>(i%16?'': '\n  db ')+ '$'+v.toString(16).padStart(2,'0')).join(',').replace(/,\n/g,'\n');dl(txt,'sprites.asm','text/plain')};window.addEventListener('keydown',e=>{if(/INPUT|SELECT/.test(e.target.tagName))return;if(e.key.toLowerCase()=='p')toolset('pencil');if(e.key.toLowerCase()=='e')toolset('eraser')});try{P=JSON.parse(localStorage.pixlverse);if(!P.frames)throw 0;render();setStatus('Restored autosave')}catch(e){fresh()}
+</script></body></html>
