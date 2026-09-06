@@ -12,6 +12,8 @@ Pixieverse targets Sprite Mode 2 and keeps the hardware representation as the so
 
 - 16×16 or 8×8 Sprite Size selected directly in the Composite sprite editor
 - fixed editor viewport with independent 10% sprite-editor zoom steps
+- sprite scanline color controls embedded in the same zoomable editor surface
+- Undo / Redo history, including grouped freehand strokes and selection drags
 - Aseprite-inspired separation of frames and layers
 - each layer maps to one real VDP hardware sprite / SAT entry
 - overlapping hardware-sprite layers for multicolor/composite characters
@@ -20,9 +22,10 @@ Pixieverse targets Sprite Mode 2 and keeps the hardware representation as the so
 - layer visibility, duplication, deletion and SAT priority ordering
 - V9938/V9958 1-bit sprite pattern masks
 - rectangular selection tool with copy/paste and keyboard movement
+- direct grab-and-drag movement of an existing selection
 - selection-aware move, flip, invert and clear operations
 - double-click / double-tap pixel erase
-- compact per-scanline color controls beside the sprite: palette index, swatch and OR flag
+- compact per-scanline color controls aligned with each sprite row: palette index, swatch and OR flag
 - up to 32 SAT entries
 - optional 8-sprites-per-scanline load visualization
 - optional simulation of hiding the 9th+ sprite
@@ -62,13 +65,18 @@ and visit `http://localhost:8000`.
 - Ctrl + mouse wheel over the editor: editor zoom
 - Arrow buttons: move selected pixels when a selection exists; otherwise shift the complete bitmap
 - Keyboard arrow keys: move the active selection
+- Drag inside an existing selection to move it directly; no need to redraw the rectangle
 - Ctrl/Cmd+C and Ctrl/Cmd+V: copy/paste selected pixels
+- Ctrl/Cmd+Z: Undo
+- Ctrl/Cmd+Shift+Z or Ctrl/Cmd+Y: Redo
 - Flip, Invert and Clear operate on the selection when one exists
 - Layer arrow controls: move the selected hardware sprite
 
 ## Sprite color controls
 
-The compact color rows next to the sprite correspond to its hardware scanlines. Each row exposes a two-digit palette index, a color swatch and an **OR** checkbox. OR maps to the V9938/V9958 combine-color (CC) flag. Legacy EC and IC values remain preserved in loaded project data for compatibility, but are not exposed by the simplified editor UI.
+The compact color rows are part of the same scrollable/zoomable editor stage as the sprite itself. Every control row is sized from the same pixel-cell scale, so it stays aligned with its corresponding hardware scanline while zooming.
+
+Each row exposes a two-digit palette index, a color swatch and an **OR** checkbox. OR maps to the V9938/V9958 combine-color (CC) flag. Legacy EC and IC values remain preserved in loaded project data for compatibility, but are not exposed by the simplified editor UI.
 
 ## Animation controls
 
@@ -103,4 +111,4 @@ For 16×16 sprites, pattern numbers are aligned to four-pattern groups. Binary e
 
 ## Roadmap
 
-Planned improvements include undo/redo, onion skinning, exact SCREEN 8 sprite color handling, collision visualization, stronger import tools, openMSX-oriented workflows, drag-to-move layers, and richer animation management.
+Planned improvements include onion skinning, exact SCREEN 8 sprite color handling, collision visualization, stronger import tools, openMSX-oriented workflows, drag-to-move layers, and richer animation management.
