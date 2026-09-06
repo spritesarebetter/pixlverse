@@ -1,5 +1,4 @@
-/* Unified sprite/color editor, selection tools, history, and percentage zoom */
-.selectioninfo{font:10px ui-monospace,monospace;color:var(--mu);min-width:52px;text-align:center}
+/* Unified sprite/color editor, compact toolbar, palette file menu, and percentage zoom */
 #selectTool.on{border-color:var(--ac);background:var(--sel)}
 .previewpanel.scanline-hidden .preview{grid-template-columns:minmax(0,1fr)}
 .previewpanel.scanline-hidden .loadpanel{display:none}
@@ -13,9 +12,13 @@
 .colorrow{height:var(--editor-cell,30px);min-height:var(--editor-cell,30px);box-sizing:border-box;display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,.82fr) minmax(0,.65fr);gap:calc(var(--editor-cell,30px)*.08);align-items:center;padding:calc(var(--editor-cell,30px)*.07);border-bottom:1px solid rgba(255,255,255,.05)}
 .colorrow.sel{background:var(--sel);outline:1px solid rgba(101,215,192,.5);outline-offset:-1px}
 .linecolor{width:100%;min-width:0;height:72%;background:#10141b;color:var(--tx);border:1px solid var(--ln);border-radius:3px;padding:0;text-align:center;font:600 clamp(7px,calc(var(--editor-cell,30px)*.31),17px) ui-monospace,monospace}
-.linecolorswatch{width:clamp(7px,calc(var(--editor-cell,30px)*.66),42px);height:clamp(7px,calc(var(--editor-cell,30px)*.66),42px);min-height:0;padding:0;border-radius:3px;justify-self:center}
-.orbox{width:clamp(8px,calc(var(--editor-cell,30px)*.5),24px);height:clamp(8px,calc(var(--editor-cell,30px)*.5),24px);margin:auto}
-.spritesizecontrol{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--mu)}.spritesizecontrol select{background:#10141b;color:var(--tx);border:1px solid var(--ln);border-radius:4px;padding:5px}
+.linecolorswatch{width:clamp(7px,calc(var(--editor-cell,30px)*.66),42px);height:clamp(7px,calc(var(--editor-cell,30px)*.66),42px);min-height:0;padding:0;border-radius:3px;justify-self:center}.orbox{width:clamp(8px,calc(var(--editor-cell,30px)*.5),24px);height:clamp(8px,calc(var(--editor-cell,30px)*.5),24px);margin:auto}
+.spritesizecontrol,.palettefilelabel{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--mu)}.spritesizecontrol select,.palettefilelabel select{background:#10141b;color:var(--tx);border:1px solid var(--ln);border-radius:4px;padding:5px}.zoombadge{display:inline-flex;align-items:center;justify-content:center;align-self:center;min-height:30px}
+.iconbutton{width:32px;min-width:32px;padding:5px;display:inline-flex;align-items:center;justify-content:center}.iconbutton svg{width:17px;height:17px;display:block;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.iconbutton.erasericon svg .fill{fill:currentColor;stroke:none}
 #undo,#redo{min-width:58px}
-@media (pointer:coarse){#previewZoomIn,#previewZoomOut,#selectTool,#copyPixels,#pastePixels,#undo,#redo{min-width:42px}.linecolor{min-height:0}.editorwrap{touch-action:pan-x pan-y}}
-@media (max-width:560px){.previewpanel.scanline-hidden .preview{grid-template-columns:1fr}.selectioninfo{min-width:44px}}
+.palettefilelabel{display:flex;flex-direction:column;align-items:stretch;gap:4px}.palettefilelabel>span{font-size:10px;color:var(--mu)}
+.rgbblock{margin-top:7px}.rgbtitle{font:10px ui-monospace,monospace;color:var(--mu);margin:6px 0 3px}.rgbinputs input{font-family:ui-monospace,monospace}
+.paletteactions{display:flex;gap:5px;flex-wrap:wrap;margin-top:7px}
+.scenecontrols{display:flex;gap:5px;align-items:center;flex-wrap:wrap}.scenecontrols label{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--mu)}.scenecontrols input{width:62px;background:#10141b;color:var(--tx);border:1px solid var(--ln);border-radius:4px;padding:5px}
+@media (pointer:coarse){#previewZoomIn,#previewZoomOut,#selectTool,#copyPixels,#pastePixels,#undo,#redo,.iconbutton{min-width:42px}.iconbutton{width:42px}.editorwrap{touch-action:pan-x pan-y}.scenecontrols input{width:72px}}
+@media (max-width:560px){.previewpanel.scanline-hidden .preview{grid-template-columns:1fr}.scenecontrols{width:100%}}
