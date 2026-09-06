@@ -1,8 +1,8 @@
 'use strict';
 // Preset RGB values come from palette extensions shipped in aseprite/aseprite.
-// Pixlverse quantizes their 8-bit RGB values to V9938/V9958 3-bit RGB on apply.
+// Pixieverse quantizes their 8-bit RGB values to V9938/V9958 3-bit RGB on apply.
 const PALETTE_PRESETS={
-  msx:{label:'Pixlverse · MSX default',source:'Pixlverse',rgb3:DEFAULT_PALETTE},
+  msx:{label:'Pixieverse · MSX default',source:'Pixieverse',rgb3:DEFAULT_PALETTE},
   db16:{label:'Aseprite · DawnBringer DB16',source:'Aseprite / DawnBringer',rgb8:[
     [20,12,28],[68,36,52],[48,52,109],[78,74,78],[133,76,48],[52,101,36],[208,70,72],[117,113,97],
     [89,125,206],[210,125,44],[133,149,161],[109,170,44],[210,170,153],[109,194,202],[218,212,94],[222,238,214]
@@ -42,13 +42,13 @@ function applyPalettePreset(key){
   setStatus(PALETTE_PRESETS[key].label+' applied · quantized to MSX RGB3');
 }
 function markPaletteCustom(){P.paletteName='Custom palette';dirty();syncPalettePresetUI()}
-function safePaletteName(name){return String(name||'pixlverse-palette').replace(/[\\/:*?"<>|]+/g,' ').replace(/\s+/g,' ').trim().slice(0,64)||'pixlverse-palette'}
+function safePaletteName(name){return String(name||'pixieverse-palette').replace(/[\\/:*?"<>|]+/g,' ').replace(/\s+/g,' ').trim().slice(0,64)||'pixieverse-palette'}
 function paletteGplText(){
   const name=safePaletteName(P.paletteName);
   const rows=P.palette.map((rgb,i)=>{const v=rgb8(rgb);return `${String(v[0]).padStart(3)} ${String(v[1]).padStart(3)} ${String(v[2]).padStart(3)} Color ${i}`});
-  return `GIMP Palette\nName: ${name}\nColumns: 8\n# Pixlverse V9938/V9958 palette (RGB3)\n${rows.join('\n')}\n`;
+  return `GIMP Palette\nName: ${name}\nColumns: 8\n# Pixieverse V9938/V9958 palette (RGB3)\n${rows.join('\n')}\n`;
 }
-function savePaletteGpl(){const name=safePaletteName(P.paletteName).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'pixlverse-palette';dl(paletteGplText(),name+'.gpl','text/plain')}
+function savePaletteGpl(){const name=safePaletteName(P.paletteName).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'pixieverse-palette';dl(paletteGplText(),name+'.gpl','text/plain')}
 function parseHexColor(v){const m=String(v||'').trim().match(/^#?([0-9a-f]{6})$/i);if(!m)return null;const n=parseInt(m[1],16);return [(n>>16)&255,(n>>8)&255,n&255]}
 function normalizeImportedColor(value){
   if(typeof value==='string'){const h=parseHexColor(value);return h?rgb8To3(h):null}
