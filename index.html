@@ -4,8 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Pixieverse — MSX2 Sprite Editor</title>
-<link rel="stylesheet" href="styles.css?v=20260906e">
-<link rel="stylesheet" href="palette-presets.css?v=20260906e">
+<link rel="stylesheet" href="styles.css?v=20260906f">
+<link rel="stylesheet" href="palette-presets.css?v=20260906f">
+<link rel="stylesheet" href="app-features.css?v=20260906f">
 </head>
 <body>
 <header>
@@ -36,8 +37,8 @@
     <div class="section">
       <div class="row"><h2>Frames</h2><button id="addFrame">＋</button></div>
       <div id="frames" class="list"></div>
-      <div class="buttonrow"><button id="dupFrame">Duplicate</button><button id="delFrame">Delete</button></div>
-      <p class="hint">Frames and layers are independent, like a traditional pixel-animation editor.</p>
+      <div class="buttonrow"><button id="dupFrame">Duplicate</button><button id="frameUp">↑</button><button id="frameDown">↓</button><button id="delFrame">Delete</button></div>
+      <p class="hint">Wait is measured in 60 Hz display frames. Example: wait 6 = 0.1 seconds.</p>
     </div>
     <div>
       <h2>Palette</h2>
@@ -62,10 +63,14 @@
         </div>
         <div id="paletteRgb8" class="mono">RGB 255, 255, 255</div>
         <label class="palettenamelabel">Palette name<input id="paletteName" type="text" maxlength="64" value="Custom palette"></label>
+        <div class="localpalette">
+          <label>Saved in Pixieverse<select id="savedPalette"><option value="">No saved palettes</option></select></label>
+          <div class="buttonrow"><button id="savePaletteLocal">Save in tool</button><button id="loadPaletteLocal">Load saved</button><button id="deletePaletteLocal">Delete</button></div>
+        </div>
         <div class="buttonrow"><button id="savePaletteFile">Save .gpl</button><button id="loadPaletteFile">Load palette</button><input id="paletteFile" type="file" accept=".gpl,.json,.pixlpal" hidden></div>
         <div class="buttonrow"><button id="resetPaletteColor">Reset color</button><button id="resetPalette">Reset palette</button></div>
       </div>
-      <p class="hint">Preset palettes from Aseprite are quantized to V9938/V9958 3-bit RGB (0–7 per channel). Saved .gpl files can be opened in Aseprite.</p>
+      <p class="hint">Built-in Aseprite palettes are quantized to V9938/V9958 RGB3. “Save in tool” stores a custom palette in this browser using local storage.</p>
     </div>
   </aside>
 
@@ -75,13 +80,13 @@
         <div class="row wrap">
           <div><h2 id="title">Composite sprite editor</h2><p id="canvasInfo" class="canvasmeta"></p></div>
           <div class="tools">
-            <span class="toolbarlabel">zoom</span><button id="editorZoomOut" title="Zoom out">−</button><span id="editorZoom" class="zoombadge">100%</span><button id="editorZoomIn" title="Zoom in">＋</button>
+            <button id="editorZoomIn" title="Zoom in">+</button><button id="editorZoomOut" title="Zoom out">−</button><span id="editorZoom" class="zoombadge">100%</span>
             <button id="pencil" class="on">✎ Pencil</button><button id="eraser">⌫ Eraser</button>
             <span class="toolbarlabel">bitmap</span><button id="left">←</button><button id="right">→</button><button id="up">↑</button><button id="down">↓</button>
             <button id="flipH">Flip H</button><button id="flipV">Flip V</button><button id="invert">Invert</button><button id="clear">Clear</button>
           </div>
         </div>
-        <p class="hint">All visible layers are composited. Drawing changes only the selected hardware-sprite layer. Left-drag draws; right-drag erases. Editor zoom does not change the document.</p>
+        <p class="hint">All visible layers are composited. Drawing changes only the selected hardware-sprite layer. Left-drag draws; right-drag erases.</p>
       </div>
       <div id="editorWrap" class="editorwrap"><canvas id="editor" class="artboardshadow"></canvas></div>
     </div>
@@ -89,11 +94,11 @@
     <div class="panel previewpanel">
       <div class="row wrap">
         <div><h2>VDP scene preview</h2><p id="previewInfo" class="hint"></p></div>
-        <div class="previewcontrols"><button id="saveImage">Save image</button><span id="previewZoom" class="zoombadge">1×</span><label class="hint"><input id="limit" type="checkbox" checked> hide 9th+ sprite</label></div>
+        <div class="previewcontrols"><button id="startAnim">Start</button><button id="stopAnim" disabled>Stop</button><button id="saveImage">Save image</button><span id="previewZoom" class="zoombadge">1×</span><label class="hint"><input id="limit" type="checkbox" checked> hide 9th+ sprite</label></div>
       </div>
       <div class="preview">
-        <div class="previewleft"><div class="screenbox"><canvas id="screenCanvas" width="256" height="212" title="Left-click: zoom in · Right-click: zoom out"></canvas></div><p class="hint previewhint">Left-click preview: zoom in · Right-click: zoom out</p></div>
-        <div><h3>Scanline load</h3><canvas id="loadCanvas" width="180" height="212" style="border:1px solid var(--ln)"></canvas><p id="loadInfo" class="mono"></p></div>
+        <div class="previewleft"><div class="screenbox"><canvas id="screenCanvas" width="256" height="212" title="Left-click: zoom in · Right-click: zoom out"></canvas></div><p class="hint previewhint">Animation runs on a 60 Hz timing base. Left-click preview: zoom in · Right-click: zoom out</p></div>
+        <div class="loadpanel"><h3>Scanline load</h3><canvas id="loadCanvas" width="180" height="212"></canvas><p id="loadInfo" class="mono"></p></div>
       </div>
     </div>
   </section>
@@ -105,7 +110,6 @@
       <div id="layers" class="list"></div>
       <div class="buttonrow"><button id="dupLayer">Duplicate</button><button id="layerUp">↑ Priority</button><button id="layerDown">↓ Priority</button><button id="layerDel">Delete</button></div>
     </div>
-
     <div class="section">
       <h2>Selected layer</h2>
       <div class="grid">
@@ -117,25 +121,20 @@
       </div>
       <div class="buttonrow"><span class="toolbarlabel">move layer</span><button id="moveL">←</button><button id="moveR">→</button><button id="moveU">↑</button><button id="moveD">↓</button></div>
     </div>
-
     <div class="section">
       <div class="row"><h2>Sprite Color Table</h2><span id="lineBadge" class="badge">line 0</span></div>
       <div class="linehead"><span>Line</span><span>Color</span><span>EC</span><span>CC</span><span>IC</span></div>
       <div id="lines"></div>
       <p class="hint">EC = −32 dots · CC = OR-color · IC = inhibit collision.</p>
     </div>
-
-    <div>
-      <h2>Export current frame</h2>
-      <div class="export"><button id="expPat">patterns.bin</button><button id="expCol">colors.bin</button><button id="expSat">sat.bin</button><button id="expPal">palette.bin</button><button id="expAsm">Z80 .asm</button></div>
-      <p id="warn" class="warning"></p>
-    </div>
+    <div><h2>Export current frame</h2><div class="export"><button id="expPat">patterns.bin</button><button id="expCol">colors.bin</button><button id="expSat">sat.bin</button><button id="expPal">palette.bin</button><button id="expAsm">Z80 .asm</button></div><p id="warn" class="warning"></p></div>
   </aside>
 </main>
 <footer><span>Aseprite-inspired workflow · MSX hardware remains the source of truth</span><span id="status">Ready</span></footer>
-<script src="app-core.js?v=20260906e"></script>
-<script src="palette-presets.js?v=20260906e"></script>
-<script src="app-canvas.js?v=20260906e"></script>
-<script src="app-ui.js?v=20260906e"></script>
+<script src="app-core.js?v=20260906f"></script>
+<script src="palette-presets.js?v=20260906f"></script>
+<script src="app-canvas.js?v=20260906f"></script>
+<script src="app-ui.js?v=20260906f"></script>
+<script src="app-features.js?v=20260906f"></script>
 </body>
 </html>
