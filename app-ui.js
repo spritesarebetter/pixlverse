@@ -1,7 +1,7 @@
-$('new').onclick=()=>confirm('Start a new project?')&&fresh();
+$('new').onclick=()=>{if(confirm('Start a new project?')){fresh();syncPalettePresetUI(true)}};
 $('save').onclick=()=>dl(JSON.stringify(P,null,2),'pixlverse.msxsprite','application/json');
 $('load').onclick=()=>$('loadFile').click();
-$('loadFile').onchange=async e=>{let f=e.target.files[0];if(!f)return;try{P=migrate(JSON.parse(await f.text()));F=S=L=0;K=15;dirty();render();setStatus('Project loaded')}catch(err){alert('Invalid project')}};
+$('loadFile').onchange=async e=>{let f=e.target.files[0];if(!f)return;try{P=migrate(JSON.parse(await f.text()));F=S=L=0;K=15;dirty();render();syncPalettePresetUI(true);setStatus('Project loaded')}catch(err){alert('Invalid project')}};
 ['vdp','screen','size','mag'].forEach(id=>$(id).onchange=e=>{P[id]=id==='vdp'?e.target.value:+e.target.value;L=0;dirty();render()});
 ['canvasW','canvasH','sceneX','sceneY'].forEach(id=>$(id).onchange=e=>{let v=+e.target.value||0;if(id==='canvasW')v=C(v,8,256);if(id==='canvasH')v=C(v,8,212);P[id]=v;dirty();render()});
 $('addFrame').onclick=()=>{P.frames.push(clone(fr()));F=P.frames.length-1;fr().name='Frame '+F;S=0;L=0;dirty();render()};
@@ -17,8 +17,13 @@ $('visible').onchange=e=>{layer().visible=e.target.checked;dirty();render()};
 $('editorZoomOut').addEventListener('click',e=>{e.preventDefault();changeEditorZoom(-1)});
 $('editorZoomIn').addEventListener('click',e=>{e.preventDefault();changeEditorZoom(1)});
 $('editorWrap').addEventListener('wheel',e=>{if(!e.ctrlKey)return;e.preventDefault();changeEditorZoom(e.deltaY<0?1:-1)},{passive:false});
-$('palR').oninput=e=>setPaletteComponent(0,e.target.value);$('palG').oninput=e=>setPaletteComponent(1,e.target.value);$('palB').oninput=e=>setPaletteComponent(2,e.target.value);
-$('resetPaletteColor').onclick=resetPaletteColor;$('resetPalette').onclick=()=>confirm('Reset all 16 palette colors?')&&resetPaletteAll();
+$('palettePreset').onchange=e=>applyPalettePreset(e.target.value);
+$('paletteName').oninput=e=>{P.paletteName=e.target.value;dirty()};
+$('savePaletteFile').onclick=savePaletteGpl;
+$('loadPaletteFile').onclick=()=>$('paletteFile').click();
+$('paletteFile').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{await loadPaletteFromFile(f)}catch(err){alert(err.message)}finally{e.target.value=''}};
+$('palR').oninput=e=>{setPaletteComponent(0,e.target.value);markPaletteCustom()};$('palG').oninput=e=>{setPaletteComponent(1,e.target.value);markPaletteCustom()};$('palB').oninput=e=>{setPaletteComponent(2,e.target.value);markPaletteCustom()};
+$('resetPaletteColor').onclick=()=>{resetPaletteColor();markPaletteCustom()};$('resetPalette').onclick=()=>{if(confirm('Reset all 16 palette colors?')){resetPaletteAll();P.paletteName=PALETTE_PRESETS.msx.label;dirty();syncPalettePresetUI()}};
 $('pencil').onclick=()=>toolset('pencil');$('eraser').onclick=()=>toolset('eraser');
 $('left').onclick=()=>shiftBitmap(-1,0);$('right').onclick=()=>shiftBitmap(1,0);$('up').onclick=()=>shiftBitmap(0,-1);$('down').onclick=()=>shiftBitmap(0,1);
 $('moveL').onclick=()=>moveLayer(-1,0);$('moveR').onclick=()=>moveLayer(1,0);$('moveU').onclick=()=>moveLayer(0,-1);$('moveD').onclick=()=>moveLayer(0,1);
@@ -30,4 +35,4 @@ let preview=$('screenCanvas');preview.oncontextmenu=e=>e.preventDefault();previe
 $('expPat').onclick=()=>dl(patBytes(),'patterns.bin');$('expCol').onclick=()=>dl(colBytes(),'colors.bin');$('expSat').onclick=()=>dl(satBytes(),'sat.bin');$('expPal').onclick=()=>dl(paletteBytes(),'palette.bin');
 $('expAsm').onclick=()=>{let arr=[...patBytes()],txt='; Pixlverse V9938/V9958 Sprite Mode 2\nsprite_patterns:\n'+arr.map((v,i)=>(i%16?'':'\n  db ')+'$'+v.toString(16).padStart(2,'0')).join(',').replace(/,\n/g,'\n');dl(txt,'sprites.asm','text/plain')};
 window.addEventListener('keydown',e=>{if(/INPUT|SELECT/.test(e.target.tagName))return;let k=e.key.toLowerCase();if(k==='p')toolset('pencil');if(k==='e')toolset('eraser');if(k==='+'||k==='=')changeEditorZoom(1);if(k==='-'||k==='_')changeEditorZoom(-1)});
-try{P=migrate(JSON.parse(localStorage.pixlverse));if(!P.frames)throw 0;render();setStatus('Restored autosave')}catch(e){defaultProject();render();setStatus('Ready')}
+try{P=migrate(JSON.parse(localStorage.pixlverse));if(!P.frames)throw 0;render();syncPalettePresetUI(true);setStatus('Restored autosave')}catch(e){defaultProject();render();syncPalettePresetUI(true);setStatus('Ready')}
