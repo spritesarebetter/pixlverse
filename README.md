@@ -1,14 +1,16 @@
-# Pixlverse
+# Pixieverse
 
 A browser-based sprite editor for MSX2 / MSX2+ hardware using the Yamaha V9938 and V9958 VDPs.
 
-## 🚀 Launch Pixlverse
+## 🚀 Launch Pixieverse
 
-**[Open Pixlverse in your browser](https://spritesarebetter.github.io/pixlverse/)**
+**[Open Pixieverse in your browser](https://spritesarebetter.github.io/pixieverse/)**
+
+> The GitHub Pages URL above becomes active after the repository is renamed from `pixlverse` to `pixieverse`.
 
 ## Current focus
 
-Pixlverse targets Sprite Mode 2 and keeps the hardware representation as the source of truth:
+Pixieverse targets Sprite Mode 2 and keeps the hardware representation as the source of truth:
 
 - customizable composite artboard size
 - fixed editor viewport with independent sprite-editor zoom
@@ -30,7 +32,7 @@ Pixlverse targets Sprite Mode 2 and keeps the hardware representation as the sou
 - Aseprite-compatible GIMP Palette (`.gpl`) save/load for custom palettes
 - `palette.bin` export in V9938 palette-register format
 - multiple animation frames
-- project autosave in browser storage
+- project autosave in browser storage, with migration from the legacy Pixlverse storage key
 - `.msxsprite` project save/load with migration from the earlier absolute-position format
 - PNG export of the VDP preview at the selected integer preview zoom
 - `patterns.bin`, `colors.bin`, `sat.bin` and Z80 assembly export
@@ -63,7 +65,7 @@ and visit `http://localhost:8000`.
 
 The active palette is always stored as 16 legal V9938/V9958 colors with 3-bit R, G and B components. Aseprite presets and imported 8-bit RGB palettes are quantized to that hardware color space.
 
-Custom palettes can be saved as `.gpl` files and loaded again in Pixlverse or Aseprite. Imported palettes with more than 16 colors use the first 16 entries; shorter palettes keep the remaining current entries.
+Custom palettes can be saved as `.gpl` files and loaded again in Pixieverse or Aseprite. Imported palettes with more than 16 colors use the first 16 entries; shorter palettes keep the remaining current entries.
 
 ## VDP preview controls
 
