@@ -1,14 +1,20 @@
-/* Selection tools, compact per-line colors, and percentage zoom */
+/* Unified sprite/color editor, selection tools, history, and percentage zoom */
 .selectioninfo{font:10px ui-monospace,monospace;color:var(--mu);min-width:52px;text-align:center}
 #selectTool.on{border-color:var(--ac);background:var(--sel)}
 .previewpanel.scanline-hidden .preview{grid-template-columns:minmax(0,1fr)}
 .previewpanel.scanline-hidden .loadpanel{display:none}
-#previewZoomIn,#previewZoomOut{min-width:30px;font-weight:700}
-.editorwork{display:grid;grid-template-columns:minmax(0,1fr) 122px;gap:8px;flex:1;min-height:0}
-.editorwork>.editorwrap{min-height:0;height:100%}
-.spritecolorside{min-width:0;background:#12161d;border:1px solid var(--ln);border-radius:4px;padding:6px;overflow:auto}
-.spritecolorside h3{margin:0 0 5px}.colorhead{display:grid;grid-template-columns:44px 28px 28px;gap:4px;align-items:center;font-size:9px;color:var(--mu);margin-bottom:3px}.colorhead span:first-child{grid-column:1/3}.colorrow{display:grid;grid-template-columns:44px 28px 28px;gap:4px;align-items:center;padding:2px;border-radius:4px}.colorrow.sel{background:var(--sel);outline:1px solid rgba(101,215,192,.45)}
-.linecolor{width:44px;min-width:0;background:#10141b;color:var(--tx);border:1px solid var(--ln);border-radius:3px;padding:3px;text-align:center;font:10px ui-monospace,monospace}.linecolorswatch{width:28px;height:24px;min-height:0;padding:0;border-radius:3px}.orbox{width:18px;height:18px;margin:auto}.spritesizecontrol{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--mu)}.spritesizecontrol select{background:#10141b;color:var(--tx);border:1px solid var(--ln);border-radius:4px;padding:5px}
-@media (pointer:coarse){#previewZoomIn,#previewZoomOut,#selectTool,#copyPixels,#pastePixels{min-width:42px}.linecolorswatch{width:36px;height:34px}.linecolor{min-height:34px}.orbox{width:22px;height:22px}.editorwork{grid-template-columns:minmax(0,1fr) 142px}}
-@media (max-width:560px){.previewpanel.scanline-hidden .preview{grid-template-columns:1fr}.selectioninfo{min-width:44px}.editorwork{grid-template-columns:minmax(0,1fr) 118px}.spritecolorside{padding:5px}}
-@media (max-width:420px){.editorwork{grid-template-columns:1fr;grid-template-rows:minmax(280px,1fr) auto}.spritecolorside{max-height:220px}.colorhead,.colorrow{grid-template-columns:52px 34px 34px}.linecolor{width:52px}.spritecolorside #lines{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2px}}
+#previewZoomIn,#previewZoomOut,#editorZoomIn,#editorZoomOut{min-width:30px;font-weight:700}
+.editorwork{display:flex;flex:1;min-height:0;min-width:0}
+.editorwork>.editorwrap{flex:1;min-height:0;height:100%}
+.editorstage{display:flex;align-items:flex-start;width:max-content;min-width:max-content;height:max-content;gap:0}
+.spritecolorrail{flex:none;width:var(--rail-width,110px);height:100%;background:#12161d;border:1px solid var(--ln);border-left:0;box-sizing:border-box;overflow:hidden}
+.spritecolorrail #lines{display:flex;flex-direction:column;width:100%;height:100%}
+.colorrow{height:var(--editor-cell,30px);min-height:var(--editor-cell,30px);box-sizing:border-box;display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,.82fr) minmax(0,.65fr);gap:calc(var(--editor-cell,30px)*.08);align-items:center;padding:calc(var(--editor-cell,30px)*.07);border-bottom:1px solid rgba(255,255,255,.05)}
+.colorrow.sel{background:var(--sel);outline:1px solid rgba(101,215,192,.5);outline-offset:-1px}
+.linecolor{width:100%;min-width:0;height:72%;background:#10141b;color:var(--tx);border:1px solid var(--ln);border-radius:3px;padding:0;text-align:center;font:600 clamp(7px,calc(var(--editor-cell,30px)*.31),17px) ui-monospace,monospace}
+.linecolorswatch{width:clamp(7px,calc(var(--editor-cell,30px)*.66),42px);height:clamp(7px,calc(var(--editor-cell,30px)*.66),42px);min-height:0;padding:0;border-radius:3px;justify-self:center}
+.orbox{width:clamp(8px,calc(var(--editor-cell,30px)*.5),24px);height:clamp(8px,calc(var(--editor-cell,30px)*.5),24px);margin:auto}
+.spritesizecontrol{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--mu)}.spritesizecontrol select{background:#10141b;color:var(--tx);border:1px solid var(--ln);border-radius:4px;padding:5px}
+#undo,#redo{min-width:58px}
+@media (pointer:coarse){#previewZoomIn,#previewZoomOut,#selectTool,#copyPixels,#pastePixels,#undo,#redo{min-width:42px}.linecolor{min-height:0}.editorwrap{touch-action:pan-x pan-y}}
+@media (max-width:560px){.previewpanel.scanline-hidden .preview{grid-template-columns:1fr}.selectioninfo{min-width:44px}}
