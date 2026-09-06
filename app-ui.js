@@ -1,9 +1,8 @@
-$('new').onclick=()=>{if(confirm('Start a new project?')){fresh();syncPalettePresetUI(true)}};
+$('new').onclick=()=>{if(confirm('Start a new project?')){fresh();if(typeof refreshPaletteFileMenu==='function')refreshPaletteFileMenu('msx')}};
 $('save').onclick=()=>dl(JSON.stringify(P,null,2),'pixieverse.msxsprite','application/json');
 $('load').onclick=()=>$('loadFile').click();
-$('loadFile').onchange=async e=>{let f=e.target.files[0];if(!f)return;try{P=migrate(JSON.parse(await f.text()));F=S=L=0;K=15;dirty();render();syncPalettePresetUI(true);setStatus('Project loaded')}catch(err){alert('Invalid project')}};
-['vdp','screen','size','mag'].forEach(id=>$(id).onchange=e=>{P[id]=id==='vdp'?e.target.value:+e.target.value;L=0;dirty();render()});
-['canvasW','canvasH','sceneX','sceneY'].forEach(id=>$(id).onchange=e=>{let v=+e.target.value||0;if(id==='canvasW')v=C(v,8,256);if(id==='canvasH')v=C(v,8,212);P[id]=v;dirty();render()});
+$('loadFile').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{P=parseProject(JSON.parse(await f.text()));F=S=L=0;K=15;dirty();render();if(typeof refreshPaletteFileMenu==='function')refreshPaletteFileMenu();setStatus('Project loaded')}catch(err){alert('Invalid current Pixieverse project')}finally{e.target.value=''}};
+['sceneX','sceneY'].forEach(id=>$(id).onchange=e=>{P[id]=Math.round(Number(e.target.value)||0);dirty();render()});
 $('addFrame').onclick=()=>{P.frames.push(clone(fr()));F=P.frames.length-1;fr().name='Frame '+F;S=0;L=0;dirty();render()};
 $('dupFrame').onclick=()=>{let f=clone(fr());f.name=fr().name+' copy';P.frames.splice(F+1,0,f);F++;S=0;L=0;dirty();render()};
 $('delFrame').onclick=()=>{if(P.frames.length>1){P.frames.splice(F,1);F=C(F,0,P.frames.length-1);S=L=0;dirty();render()}};
@@ -12,33 +11,24 @@ $('dupLayer').onclick=()=>{if(fr().sprites.length<32){let s=clone(layer());s.nam
 $('layerDel').onclick=()=>{if(fr().sprites.length>1){fr().sprites.splice(S,1);S=C(S,0,fr().sprites.length-1);L=0;dirty();render()}};
 $('layerUp').onclick=()=>{if(S>0){let a=fr().sprites;[a[S-1],a[S]]=[a[S],a[S-1]];S--;dirty();render()}};
 $('layerDown').onclick=()=>{let a=fr().sprites;if(S<a.length-1){[a[S+1],a[S]]=[a[S],a[S+1]];S++;dirty();render()}};
-['name','pattern','layerX','layerY'].forEach(id=>$(id).oninput=e=>{let k=id==='layerX'?'ox':id==='layerY'?'oy':id;layer()[k]=id==='name'?e.target.value:+e.target.value||0;dirty();renderLayers();drawEditor();drawScene();warnings()});
+['name','pattern','layerX','layerY'].forEach(id=>$(id).oninput=e=>{let k=id==='layerX'?'ox':id==='layerY'?'oy':id;layer()[k]=id==='name'?e.target.value:+e.target.value||0;dirty();renderLayers();drawEditor();drawScene();warnings();props()});
 $('visible').onchange=e=>{layer().visible=e.target.checked;dirty();render()};
-$('editorZoomOut').addEventListener('click',e=>{e.preventDefault();changeEditorZoom(-1)});
-$('editorZoomIn').addEventListener('click',e=>{e.preventDefault();changeEditorZoom(1)});
+$('editorZoomOut').addEventListener('click',e=>{e.preventDefault();changeEditorZoom(-1)});$('editorZoomIn').addEventListener('click',e=>{e.preventDefault();changeEditorZoom(1)});
 $('editorWrap').addEventListener('wheel',e=>{if(!e.ctrlKey)return;e.preventDefault();changeEditorZoom(e.deltaY<0?1:-1)},{passive:false});
-$('palettePreset').onchange=e=>applyPalettePreset(e.target.value);
 $('paletteName').oninput=e=>{P.paletteName=e.target.value;dirty()};
 $('savePaletteFile').onclick=savePaletteGpl;
-$('loadPaletteFile').onclick=()=>$('paletteFile').click();
 $('paletteFile').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{await loadPaletteFromFile(f)}catch(err){alert(err.message)}finally{e.target.value=''}};
-$('palR').oninput=e=>{setPaletteComponent(0,e.target.value);markPaletteCustom()};$('palG').oninput=e=>{setPaletteComponent(1,e.target.value);markPaletteCustom()};$('palB').oninput=e=>{setPaletteComponent(2,e.target.value);markPaletteCustom()};
-$('resetPaletteColor').onclick=()=>{resetPaletteColor();markPaletteCustom()};$('resetPalette').onclick=()=>{if(confirm('Reset all 16 palette colors?')){resetPaletteAll();P.paletteName=PALETTE_PRESETS.msx.label;dirty();syncPalettePresetUI()}};
+[['msxR',0],['msxG',1],['msxB',2]].forEach(([id,c])=>$(id).oninput=e=>setPaletteComponent3(c,e.target.value));
+[['palR',0],['palG',1],['palB',2]].forEach(([id,c])=>$(id).oninput=e=>setPaletteComponent8(c,e.target.value));
 $('pencil').onclick=()=>toolset('pencil');$('eraser').onclick=()=>toolset('eraser');
 $('left').onclick=()=>shiftBitmap(-1,0);$('right').onclick=()=>shiftBitmap(1,0);$('up').onclick=()=>shiftBitmap(0,-1);$('down').onclick=()=>shiftBitmap(0,1);
 $('moveL').onclick=()=>moveLayer(-1,0);$('moveR').onclick=()=>moveLayer(1,0);$('moveU').onclick=()=>moveLayer(0,-1);$('moveD').onclick=()=>moveLayer(0,1);
 $('flipH').onclick=()=>flip(true);$('flipV').onclick=()=>flip(false);
-$('invert').onclick=()=>{let n=sz();for(let y=0;y<n;y++)for(let x=0;x<n;x++)layer().mask[y][x]^=1;dirty();render()};
-$('clear').onclick=()=>{let n=sz();for(let y=0;y<n;y++)for(let x=0;x<n;x++)layer().mask[y][x]=0;dirty();render()};
+$('invert').onclick=()=>{for(let y=0;y<sz();y++)for(let x=0;x<sz();x++)layer().mask[y][x]^=1;dirty();render()};
+$('clear').onclick=()=>{for(let y=0;y<sz();y++)for(let x=0;x<sz();x++)layer().mask[y][x]=0;dirty();render()};
 $('limit').onchange=drawScene;$('saveImage').onclick=savePreviewImage;
 let preview=$('screenCanvas');preview.oncontextmenu=e=>e.preventDefault();preview.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse'&&e.button!==0&&e.button!==2)return;e.preventDefault();changePreviewScale(e.button===2?-1:1)});
 $('expPat').onclick=()=>dl(patBytes(),'patterns.bin');$('expCol').onclick=()=>dl(colBytes(),'colors.bin');$('expSat').onclick=()=>dl(satBytes(),'sat.bin');$('expPal').onclick=()=>dl(paletteBytes(),'palette.bin');
-$('expAsm').onclick=()=>{let arr=[...patBytes()],txt='; Pixieverse V9938/V9958 Sprite Mode 2\nsprite_patterns:\n'+arr.map((v,i)=>(i%16?'':'\n  db ')+'$'+v.toString(16).padStart(2,'0')).join(',').replace(/,\n/g,'\n');dl(txt,'sprites.asm','text/plain')};
-window.addEventListener('keydown',e=>{if(/INPUT|SELECT/.test(e.target.tagName))return;let k=e.key.toLowerCase();if(k==='p')toolset('pencil');if(k==='e')toolset('eraser');if(k==='+'||k==='=')changeEditorZoom(1);if(k==='-'||k==='_')changeEditorZoom(-1)});
-try{
-  const current=localStorage.getItem(STORAGE_KEY),legacy=current?null:localStorage.getItem(LEGACY_STORAGE_KEY),saved=current||legacy;
-  if(!saved)throw 0;
-  P=migrate(JSON.parse(saved));if(!P.frames)throw 0;render();syncPalettePresetUI(true);
-  if(legacy)localStorage.setItem(STORAGE_KEY,JSON.stringify(P));
-  setStatus(legacy?'Restored autosave · migrated from Pixlverse':'Restored autosave');
-}catch(e){defaultProject();render();syncPalettePresetUI(true);setStatus('Ready')}
+$('expAsm').onclick=()=>{let arr=[...patBytes()],txt='; Pixieverse Sprite Mode 2\nsprite_patterns:\n'+arr.map((v,i)=>(i%16?'':'\n  db ')+'$'+v.toString(16).padStart(2,'0')).join(',').replace(/,\n/g,'\n');dl(txt,'sprites.asm','text/plain')};
+window.addEventListener('keydown',e=>{if(/INPUT|SELECT|TEXTAREA/.test(e.target.tagName))return;let k=e.key.toLowerCase();if(k==='p')toolset('pencil');if(k==='e')toolset('eraser');if(k==='+'||k==='=')changeEditorZoom(1);if(k==='-'||k==='_')changeEditorZoom(-1)});
+try{const saved=localStorage.getItem(STORAGE_KEY);if(!saved)throw 0;P=parseProject(JSON.parse(saved));render();setStatus('Restored autosave')}catch(e){try{localStorage.removeItem(STORAGE_KEY)}catch(_){}defaultProject();render();setStatus('Ready')}
