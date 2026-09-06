@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Pixieverse — MSX2 Sprite Editor</title>
-<link rel="stylesheet" href="styles.css?v=20260906j">
-<link rel="stylesheet" href="palette-presets.css?v=20260906j">
-<link rel="stylesheet" href="app-features.css?v=20260906j">
-<link rel="stylesheet" href="responsive.css?v=20260906j">
-<link rel="stylesheet" href="app-editing.css?v=20260906j">
+<link rel="stylesheet" href="styles.css?v=20260906k">
+<link rel="stylesheet" href="palette-presets.css?v=20260906k">
+<link rel="stylesheet" href="app-features.css?v=20260906k">
+<link rel="stylesheet" href="responsive.css?v=20260906k">
+<link rel="stylesheet" href="app-editing.css?v=20260906k">
 </head>
 <body>
 <header>
@@ -83,19 +83,20 @@
           <div class="tools">
             <label class="spritesizecontrol">Sprite Size<select id="spriteSize"><option value="16">16×16</option><option value="8">8×8</option></select></label>
             <button id="editorZoomIn" title="Zoom in">+</button><button id="editorZoomOut" title="Zoom out">−</button><span id="editorZoom" class="zoombadge">100%</span>
+            <button id="undo" disabled title="Undo (Ctrl/Cmd+Z)">Undo</button><button id="redo" disabled title="Redo (Ctrl/Cmd+Shift+Z or Ctrl/Cmd+Y)">Redo</button>
             <button id="pencil" class="on">✎ Pencil</button><button id="eraser">⌫ Eraser</button><button id="selectTool">▣ Select</button><button id="copyPixels" disabled>Copy</button><button id="pastePixels" disabled>Paste</button><button id="clearSelection">Deselect</button><span id="selectionInfo" class="selectioninfo">none</span>
             <button id="left">←</button><button id="right">→</button><button id="up">↑</button><button id="down">↓</button>
             <button id="flipH">Flip H</button><button id="flipV">Flip V</button><button id="invert">Invert</button><button id="clear">Clear</button>
           </div>
         </div>
-        <p class="hint">Left-drag draws; right-drag erases. Double-click/double-tap erases a pixel. With a selection, arrows (or keyboard arrow keys) move the selected pixels and rectangle; flip, invert and clear affect only the selection. Zoom changes in 10% steps.</p>
+        <p class="hint">Left-drag draws; right-drag erases. Double-click/double-tap erases a pixel. Re-enter an existing selection and drag inside it to move the selected pixels directly. Undo/Redo also support Ctrl/Cmd+Z and Ctrl/Cmd+Shift+Z.</p>
       </div>
       <div class="editorwork">
-        <div id="editorWrap" class="editorwrap"><canvas id="editor" class="artboardshadow"></canvas></div>
-        <div class="spritecolorside">
-          <h3>Sprite Colors</h3><span id="lineBadge" hidden></span>
-          <div class="colorhead"><span>Color</span><span></span><span>OR</span></div>
-          <div id="lines"></div>
+        <div id="editorWrap" class="editorwrap">
+          <div id="editorStage" class="editorstage">
+            <canvas id="editor" class="artboardshadow"></canvas>
+            <div id="spriteColorRail" class="spritecolorrail" aria-label="Sprite colors aligned to scanlines"><span id="lineBadge" hidden></span><div id="lines"></div></div>
+          </div>
         </div>
       </div>
     </div>
@@ -134,11 +135,11 @@
   </aside>
 </main>
 <footer><span>Aseprite-inspired workflow · MSX hardware remains the source of truth</span><span id="status">Ready</span></footer>
-<script src="app-core.js?v=20260906j"></script>
-<script src="palette-presets.js?v=20260906j"></script>
-<script src="app-canvas.js?v=20260906j"></script>
-<script src="app-ui.js?v=20260906j"></script>
-<script src="app-features.js?v=20260906j"></script>
-<script src="app-editing.js?v=20260906j"></script>
+<script src="app-core.js?v=20260906k"></script>
+<script src="palette-presets.js?v=20260906k"></script>
+<script src="app-canvas.js?v=20260906k"></script>
+<script src="app-ui.js?v=20260906k"></script>
+<script src="app-features.js?v=20260906k"></script>
+<script src="app-editing.js?v=20260906k"></script>
 </body>
 </html>
