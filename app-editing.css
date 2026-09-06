@@ -7,8 +7,9 @@
 .editorwork{display:flex;flex:1;min-height:0;min-width:0}
 .editorwork>.editorwrap{flex:1;min-height:0;height:100%}
 .editorstage{display:flex;align-items:flex-start;width:max-content;min-width:max-content;height:max-content;gap:0}
-.spritecolorrail{flex:none;width:var(--rail-width,110px);height:100%;background:#12161d;border:1px solid var(--ln);border-left:0;box-sizing:border-box;overflow:hidden}
-.spritecolorrail #lines{display:flex;flex-direction:column;width:100%;height:100%}
+.spritecolorrail{position:relative;flex:none;width:var(--rail-width,110px);height:100%;background:#12161d;border:1px solid var(--ln);border-left:0;box-sizing:border-box;overflow:visible}
+.spritecolorrail #lines{display:flex;flex-direction:column;width:100%;height:100%;overflow:hidden}
+.colorlabels{position:absolute;left:0;top:-15px;width:100%;display:grid;grid-template-columns:minmax(0,2.07fr) minmax(0,.65fr);align-items:center;font:9px ui-monospace,monospace;color:var(--mu);pointer-events:none;padding:0 2px;box-sizing:border-box}.colorlabels span:last-child{text-align:center}
 .colorrow{height:var(--editor-cell,30px);min-height:var(--editor-cell,30px);box-sizing:border-box;display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,.82fr) minmax(0,.65fr);gap:calc(var(--editor-cell,30px)*.08);align-items:center;padding:calc(var(--editor-cell,30px)*.07);border-bottom:1px solid rgba(255,255,255,.05)}
 .colorrow.sel{background:var(--sel);outline:1px solid rgba(101,215,192,.5);outline-offset:-1px}
 .linecolor{width:100%;min-width:0;height:72%;background:#10141b;color:var(--tx);border:1px solid var(--ln);border-radius:3px;padding:0;text-align:center;font:600 clamp(7px,calc(var(--editor-cell,30px)*.31),17px) ui-monospace,monospace}
