@@ -7,6 +7,7 @@ const DEFAULT_PALETTE=[
 ];
 let PAL=[];
 const $=id=>document.getElementById(id), C=(v,a,b)=>Math.max(a,Math.min(b,v)), clone=o=>JSON.parse(JSON.stringify(o));
+const STORAGE_KEY='pixieverse', LEGACY_STORAGE_KEY='pixlverse';
 let P,F=0,S=0,L=0,K=15,drag=false,tool='pencil',last=null,previewScale=1,editorCell=24;
 
 const mask=()=>Array.from({length:16},()=>Array(16).fill(0));
@@ -18,7 +19,7 @@ function refreshPaletteCache(){PAL=P.palette.map(rgb3Hex)}
 function normalizePalette(pal){return Array.from({length:16},(_,i)=>normalizeRgb3(Array.isArray(pal?.[i])?pal[i]:DEFAULT_PALETTE[i]))}
 function mkLayer(i){return{name:'Layer '+i,ox:0,oy:0,pattern:(P?.size||16)==16?i*4:i,visible:true,mask:mask(),lines:attrs()}}
 function mkFrame(i){return{name:'Frame '+i,sprites:[mkLayer(0)]}}
-function defaultProject(){P={vdp:'V9938',screen:5,size:16,mag:1,canvasW:16,canvasH:16,sceneX:96,sceneY:80,palette:clone(DEFAULT_PALETTE),frames:[]};P.frames=[mkFrame(0)];F=S=L=0;K=15;refreshPaletteCache()}
+function defaultProject(){P={vdp:'V9938',screen:5,size:16,mag:1,canvasW:16,canvasH:16,sceneX:96,sceneY:80,palette:clone(DEFAULT_PALETTE),paletteName:'Pixieverse · MSX default',frames:[]};P.frames=[mkFrame(0)];F=S=L=0;K=15;refreshPaletteCache()}
 function migrate(p){
   if(!p||typeof p!=='object')throw new Error('bad project');
   p.vdp=p.vdp||'V9938';p.screen=+p.screen||5;p.size=+p.size===8?8:16;p.mag=+p.mag===2?2:1;
@@ -31,7 +32,7 @@ function migrate(p){
 function fresh(){defaultProject();dirty(false);render();setStatus('New project')}
 const fr=()=>P.frames[F], layer=()=>fr().sprites[S], sz=()=>+P.size, mg=()=>+P.mag, aw=()=>+P.canvasW, ah=()=>+P.canvasH;
 function setStatus(t){$('status').textContent=t}
-function dirty(save=true){setStatus('Modified');if(save)try{localStorage.pixlverse=JSON.stringify(P)}catch(e){}}
+function dirty(save=true){setStatus('Modified');if(save)try{localStorage.setItem(STORAGE_KEY,JSON.stringify(P))}catch(e){}}
 function clampSelection(){F=C(F,0,P.frames.length-1);S=C(S,0,fr().sprites.length-1);L=C(L,0,sz()-1);K=C(K,0,15)}
 
 function render(){clampSelection();refreshPaletteCache();['vdp','screen','size','mag','canvasW','canvasH','sceneX','sceneY'].forEach(id=>$(id).value=P[id]);renderFrames();renderLayers();props();lineTable();palette();drawEditor();drawScene();loadGraph();warnings();applyPreviewScale()}
