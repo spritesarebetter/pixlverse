@@ -1,0 +1,8 @@
+/* Selection tools and percentage-based VDP preview zoom */
+.selectioninfo{font:10px ui-monospace,monospace;color:var(--mu);min-width:52px;text-align:center}
+#selectTool.on{border-color:var(--ac);background:var(--sel)}
+.previewpanel.scanline-hidden .preview{grid-template-columns:minmax(0,1fr)}
+.previewpanel.scanline-hidden .loadpanel{display:none}
+#previewZoomIn,#previewZoomOut{min-width:30px;font-weight:700}
+@media (pointer:coarse){#previewZoomIn,#previewZoomOut,#selectTool,#copyPixels,#pastePixels{min-width:42px}}
+@media (max-width:560px){.previewpanel.scanline-hidden .preview{grid-template-columns:1fr}.selectioninfo{min-width:44px}}
