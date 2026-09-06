@@ -11,6 +11,7 @@ A browser-based sprite editor for MSX2 / MSX2+ hardware using the Yamaha V9938 a
 Pixlverse targets Sprite Mode 2 and keeps the hardware representation as the source of truth:
 
 - customizable composite artboard size
+- fixed editor viewport with independent sprite-editor zoom
 - Aseprite-inspired separation of frames and layers
 - each layer maps to one real VDP hardware sprite / SAT entry
 - overlapping hardware-sprite layers for multicolor/composite characters
@@ -24,6 +25,10 @@ Pixlverse targets Sprite Mode 2 and keeps the hardware representation as the sou
 - up to 32 SAT entries
 - 8-sprites-per-scanline load visualization
 - optional simulation of hiding the 9th+ sprite
+- editable 16-entry V9938/V9958 RGB3 palette
+- Aseprite-shipped palette presets including DawnBringer DB16, Arne16, JMP, PICO-8 and Commodore 64
+- Aseprite-compatible GIMP Palette (`.gpl`) save/load for custom palettes
+- `palette.bin` export in V9938 palette-register format
 - multiple animation frames
 - project autosave in browser storage
 - `.msxsprite` project save/load with migration from the earlier absolute-position format
@@ -49,8 +54,16 @@ and visit `http://localhost:8000`.
 - Right-click / drag on the artboard: erase on the selected layer
 - `P`: pencil
 - `E`: eraser
+- `+` / `-`: editor zoom
+- Ctrl + mouse wheel over the editor: editor zoom
 - Layer arrow controls: move the selected hardware sprite within the composite canvas
 - Bitmap arrow controls: shift pixels inside the selected hardware sprite
+
+## Palette controls
+
+The active palette is always stored as 16 legal V9938/V9958 colors with 3-bit R, G and B components. Aseprite presets and imported 8-bit RGB palettes are quantized to that hardware color space.
+
+Custom palettes can be saved as `.gpl` files and loaded again in Pixlverse or Aseprite. Imported palettes with more than 16 colors use the first 16 entries; shorter palettes keep the remaining current entries.
 
 ## VDP preview controls
 
@@ -62,8 +75,8 @@ and visit `http://localhost:8000`.
 
 The customizable canvas is an editor-side composite artboard; it does not create non-standard VDP sprite sizes. Every layer remains a legal 8×8 or 16×16 hardware sprite. Layer order maps to SAT priority, with layer #0 having the highest priority.
 
-For 16×16 sprites, pattern numbers are aligned to four-pattern groups. Binary export uses the V9938 quadrant ordering and exports a 2048-byte pattern table, 512-byte Sprite Mode 2 color table, and 128-byte sprite attribute table for the current frame.
+For 16×16 sprites, pattern numbers are aligned to four-pattern groups. Binary export uses the V9938 quadrant ordering and exports a 2048-byte pattern table, 512-byte Sprite Mode 2 color table, 128-byte sprite attribute table, and optional 32-byte palette table for the current project/frame.
 
 ## Roadmap
 
-Planned improvements include undo/redo, onion skinning, editable V9938 palette registers, exact SCREEN 8 sprite color handling, collision visualization, stronger import tools, openMSX-oriented workflows, drag-to-move layers, and richer animation management.
+Planned improvements include undo/redo, onion skinning, exact SCREEN 8 sprite color handling, collision visualization, stronger import tools, openMSX-oriented workflows, drag-to-move layers, and richer animation management.
