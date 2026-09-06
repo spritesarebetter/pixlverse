@@ -9,12 +9,12 @@ main>aside:last-child{grid-area:right}
 header{padding-left:max(14px,env(safe-area-inset-left));padding-right:max(14px,env(safe-area-inset-right));padding-top:max(9px,env(safe-area-inset-top))}
 footer{padding-left:max(14px,env(safe-area-inset-left));padding-right:max(14px,env(safe-area-inset-right));padding-bottom:max(9px,env(safe-area-inset-bottom))}
 
-/* Landscape tablets and compact laptops: keep the editor central, stack side panels on the left. */
+/* Landscape tablets and compact laptops: keep the editor central, stack scrollable side panels on the left. */
 @media (max-width:1180px) and (min-width:801px){
   body{overflow:auto}
-  main{grid-template-areas:"left mid" "right mid";grid-template-columns:minmax(220px,30vw) minmax(0,1fr);grid-template-rows:auto auto;height:auto;min-height:calc(100dvh - 92px);align-items:start}
-  main>aside:first-child,main>aside:last-child{max-height:none;overflow:auto}
-  .mid{grid-row:1/3;height:clamp(620px,calc(100dvh - 108px),1100px)}
+  main{grid-template-areas:"left mid" "right mid";grid-template-columns:minmax(220px,30vw) minmax(0,1fr);grid-template-rows:minmax(0,1fr) minmax(0,1fr);height:clamp(620px,calc(100dvh - 108px),1100px);min-height:0;align-items:stretch}
+  main>aside:first-child,main>aside:last-child{height:auto;max-height:none;overflow:auto}
+  .mid{grid-row:1/3;height:100%}
   .editorwrap,.screenbox{min-height:220px}
   .preview{grid-template-columns:minmax(0,1fr) minmax(150px,180px)}
   .tools{align-items:center}
@@ -77,11 +77,11 @@ footer{padding-left:max(14px,env(safe-area-inset-left));padding-right:max(14px,e
   #editorZoomIn,#editorZoomOut{min-width:42px}
 }
 
-/* Very short landscape screens remain usable through internal scrolling. */
+/* Very short landscape screens remain usable by allowing a small page scroll. */
 @media (max-height:650px) and (min-width:801px){
   header{padding-top:6px;padding-bottom:6px}
-  main{height:auto;min-height:calc(100dvh - 80px)}
-  .mid{height:max(560px,calc(100dvh - 86px))}
+  main{height:560px;min-height:560px}
+  .mid{height:100%}
   .panel{padding:8px}
   footer{padding-top:5px;padding-bottom:5px}
 }
