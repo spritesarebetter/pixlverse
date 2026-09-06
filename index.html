@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Pixieverse — MSX2 Sprite Editor</title>
-<link rel="stylesheet" href="styles.css?v=20260906i">
-<link rel="stylesheet" href="palette-presets.css?v=20260906i">
-<link rel="stylesheet" href="app-features.css?v=20260906i">
-<link rel="stylesheet" href="responsive.css?v=20260906i">
-<link rel="stylesheet" href="app-editing.css?v=20260906i">
+<link rel="stylesheet" href="styles.css?v=20260906j">
+<link rel="stylesheet" href="palette-presets.css?v=20260906j">
+<link rel="stylesheet" href="app-features.css?v=20260906j">
+<link rel="stylesheet" href="responsive.css?v=20260906j">
+<link rel="stylesheet" href="app-editing.css?v=20260906j">
 </head>
 <body>
 <header>
@@ -20,21 +20,20 @@
     <div class="section">
       <h2>Document</h2>
       <div class="grid">
-        <label>Canvas width<input id="canvasW" type="number" min="8" max="256" step="1"></label>
-        <label>Canvas height<input id="canvasH" type="number" min="8" max="212" step="1"></label>
         <label>Scene X<input id="sceneX" type="number" min="-64" max="255"></label>
         <label>Scene Y<input id="sceneY" type="number" min="-64" max="255"></label>
       </div>
-      <p class="hint">Canvas = composite artboard. Scene X/Y places the whole composite in the VDP preview.</p>
+      <input id="canvasW" type="hidden"><input id="canvasH" type="hidden">
+      <p class="hint">Scene X/Y places the sprite in the VDP preview.</p>
     </div>
     <div class="section">
       <h2>Hardware target</h2>
       <div class="grid">
         <label>VDP<select id="vdp"><option>V9938</option><option>V9958</option></select></label>
         <label>Screen<select id="screen"><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option></select></label>
-        <label>HW sprite<select id="size"><option value="16">16×16</option><option value="8">8×8</option></select></label>
         <label>HW magnify<select id="mag"><option value="1">1×</option><option value="2">2×</option></select></label>
       </div>
+      <select id="size" hidden><option value="16">16×16</option><option value="8">8×8</option></select>
     </div>
     <div class="section">
       <div class="row"><h2>Frames</h2><button id="addFrame">＋</button></div>
@@ -82,15 +81,23 @@
         <div class="row wrap">
           <div><h2 id="title">Composite sprite editor</h2><p id="canvasInfo" class="canvasmeta"></p></div>
           <div class="tools">
+            <label class="spritesizecontrol">Sprite Size<select id="spriteSize"><option value="16">16×16</option><option value="8">8×8</option></select></label>
             <button id="editorZoomIn" title="Zoom in">+</button><button id="editorZoomOut" title="Zoom out">−</button><span id="editorZoom" class="zoombadge">100%</span>
             <button id="pencil" class="on">✎ Pencil</button><button id="eraser">⌫ Eraser</button><button id="selectTool">▣ Select</button><button id="copyPixels" disabled>Copy</button><button id="pastePixels" disabled>Paste</button><button id="clearSelection">Deselect</button><span id="selectionInfo" class="selectioninfo">none</span>
             <button id="left">←</button><button id="right">→</button><button id="up">↑</button><button id="down">↓</button>
             <button id="flipH">Flip H</button><button id="flipV">Flip V</button><button id="invert">Invert</button><button id="clear">Clear</button>
           </div>
         </div>
-        <p class="hint">Left-drag draws; right-drag erases. Double-click/double-tap a pixel to erase it. Select a rectangle to make shift, flip, invert and clear operate only inside it. Ctrl/Cmd+C and Ctrl/Cmd+V copy/paste the selection.</p>
+        <p class="hint">Left-drag draws; right-drag erases. Double-click/double-tap erases a pixel. With a selection, arrows (or keyboard arrow keys) move the selected pixels and rectangle; flip, invert and clear affect only the selection. Zoom changes in 10% steps.</p>
       </div>
-      <div id="editorWrap" class="editorwrap"><canvas id="editor" class="artboardshadow"></canvas></div>
+      <div class="editorwork">
+        <div id="editorWrap" class="editorwrap"><canvas id="editor" class="artboardshadow"></canvas></div>
+        <div class="spritecolorside">
+          <h3>Sprite Colors</h3><span id="lineBadge" hidden></span>
+          <div class="colorhead"><span>Color</span><span></span><span>OR</span></div>
+          <div id="lines"></div>
+        </div>
+      </div>
     </div>
 
     <div id="previewPanel" class="panel previewpanel scanline-hidden">
@@ -123,21 +130,15 @@
       </div>
       <div class="buttonrow"><span class="toolbarlabel">move layer</span><button id="moveL">←</button><button id="moveR">→</button><button id="moveU">↑</button><button id="moveD">↓</button></div>
     </div>
-    <div class="section">
-      <div class="row"><h2>Sprite Color Table</h2><span id="lineBadge" class="badge">line 0</span></div>
-      <div class="linehead"><span>Line</span><span>Color</span><span>EC</span><span>CC</span><span>IC</span></div>
-      <div id="lines"></div>
-      <p class="hint">EC = −32 dots · CC = OR-color · IC = inhibit collision.</p>
-    </div>
     <div><h2>Export current frame</h2><div class="export"><button id="expPat">patterns.bin</button><button id="expCol">colors.bin</button><button id="expSat">sat.bin</button><button id="expPal">palette.bin</button><button id="expAsm">Z80 .asm</button></div><p id="warn" class="warning"></p></div>
   </aside>
 </main>
 <footer><span>Aseprite-inspired workflow · MSX hardware remains the source of truth</span><span id="status">Ready</span></footer>
-<script src="app-core.js?v=20260906i"></script>
-<script src="palette-presets.js?v=20260906i"></script>
-<script src="app-canvas.js?v=20260906i"></script>
-<script src="app-ui.js?v=20260906i"></script>
-<script src="app-features.js?v=20260906i"></script>
-<script src="app-editing.js?v=20260906i"></script>
+<script src="app-core.js?v=20260906j"></script>
+<script src="palette-presets.js?v=20260906j"></script>
+<script src="app-canvas.js?v=20260906j"></script>
+<script src="app-ui.js?v=20260906j"></script>
+<script src="app-features.js?v=20260906j"></script>
+<script src="app-editing.js?v=20260906j"></script>
 </body>
 </html>
