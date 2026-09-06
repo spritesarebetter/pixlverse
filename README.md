@@ -10,10 +10,12 @@ A browser-based MSX2 / MSX2+ Sprite Mode 2 editor.
 
 Pixieverse keeps the hardware sprite representation as the source of truth:
 
-- 16×16 or 8×8 size selected in the Composite sprite editor
+- compact single-line header and space-efficient editor layout
+- 16×16 or 8×8 size selected in the Sprite editor
+- two side-by-side drawing areas: composite view and selected-layer view
 - editor and VDP preview zoom in 10% steps
-- per-scanline color controls embedded beside the sprite and scaling with it
-- two-digit palette index, swatch and OR flag for each sprite row
+- per-scanline color swatch and OR controls embedded beside the sprite and scaling immediately with it
+- palette editor moved out of the sidebar into a popup opened from a scanline color swatch
 - Undo / Redo, including grouped drawing strokes and selection drags
 - rectangular selection with copy/paste, arrow-key movement and direct drag movement
 - selection-aware move, flip, invert and clear
@@ -43,7 +45,8 @@ Pixieverse does not contain format-migration or legacy-project compatibility cod
 
 - Left-click / drag: draw
 - Right-click / drag: erase
-- Double-click / double-tap: erase a pixel
+- Double-click / double-tap: erase a pixel in the composite editor
+- The second canvas shows only the selected hardware layer and is directly drawable with Pencil/Eraser
 - `P`: pencil
 - `E`: eraser
 - `S`: selection tool
@@ -59,7 +62,7 @@ Pixieverse does not contain format-migration or legacy-project compatibility cod
 
 ## Palette controls
 
-The **File** menu contains built-in palettes, palettes saved inside Pixieverse, and **Load…** for opening a `.gpl` file.
+Click a scanline color swatch to open the floating palette popup. The **File** menu there contains built-in palettes, palettes saved inside Pixieverse, and **Load…** for opening a `.gpl` file.
 
 - **Save** stores the current palette in browser local storage and adds it to the File menu.
 - **Delete** removes the selected locally saved palette.
