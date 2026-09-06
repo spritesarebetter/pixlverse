@@ -4,7 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Pixlverse — MSX2 Sprite Editor</title>
-<link rel="stylesheet" href="styles.css?v=20260906c">
+<link rel="stylesheet" href="styles.css?v=20260906d">
+<link rel="stylesheet" href="palette-presets.css?v=20260906d">
 </head>
 <body>
 <header>
@@ -40,6 +41,17 @@
     </div>
     <div>
       <h2>Palette</h2>
+      <div class="palettepresetrow">
+        <label>Preset<select id="palettePreset">
+          <option value="custom">Custom / modified</option>
+          <option value="msx">Pixlverse · MSX default</option>
+          <option value="db16">Aseprite · DawnBringer DB16</option>
+          <option value="arne16">Aseprite · Arne16</option>
+          <option value="jmp">Aseprite · JMP (MSX-inspired)</option>
+          <option value="pico8">Aseprite · PICO-8</option>
+          <option value="c64">Aseprite · Commodore 64</option>
+        </select></label>
+      </div>
       <div id="palette" class="palette"></div>
       <div class="paletteeditor">
         <div class="paletteeditorhead"><span id="paletteChip" class="palettechip"></span><strong id="paletteIndex">Color 15</strong><code id="paletteHex">#FFFFFF</code></div>
@@ -49,9 +61,11 @@
           <label>B <input id="palB" type="number" min="0" max="7" step="1"></label>
         </div>
         <div id="paletteRgb8" class="mono">RGB 255, 255, 255</div>
+        <label class="palettenamelabel">Palette name<input id="paletteName" type="text" maxlength="64" value="Custom palette"></label>
+        <div class="buttonrow"><button id="savePaletteFile">Save .gpl</button><button id="loadPaletteFile">Load palette</button><input id="paletteFile" type="file" accept=".gpl,.json,.pixlpal" hidden></div>
         <div class="buttonrow"><button id="resetPaletteColor">Reset color</button><button id="resetPalette">Reset palette</button></div>
       </div>
-      <p class="hint">V9938/V9958 palette components are 3-bit RGB: values 0–7. Click a swatch to select/apply it.</p>
+      <p class="hint">Preset palettes from Aseprite are quantized to V9938/V9958 3-bit RGB (0–7 per channel). Saved .gpl files can be opened in Aseprite.</p>
     </div>
   </aside>
 
@@ -119,8 +133,9 @@
   </aside>
 </main>
 <footer><span>Aseprite-inspired workflow · MSX hardware remains the source of truth</span><span id="status">Ready</span></footer>
-<script src="app-core.js?v=20260906c"></script>
-<script src="app-canvas.js?v=20260906c"></script>
-<script src="app-ui.js?v=20260906c"></script>
+<script src="app-core.js?v=20260906d"></script>
+<script src="palette-presets.js?v=20260906d"></script>
+<script src="app-canvas.js?v=20260906d"></script>
+<script src="app-ui.js?v=20260906d"></script>
 </body>
 </html>
