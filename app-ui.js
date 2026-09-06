@@ -1,5 +1,5 @@
 $('new').onclick=()=>{if(confirm('Start a new project?')){fresh();syncPalettePresetUI(true)}};
-$('save').onclick=()=>dl(JSON.stringify(P,null,2),'pixlverse.msxsprite','application/json');
+$('save').onclick=()=>dl(JSON.stringify(P,null,2),'pixieverse.msxsprite','application/json');
 $('load').onclick=()=>$('loadFile').click();
 $('loadFile').onchange=async e=>{let f=e.target.files[0];if(!f)return;try{P=migrate(JSON.parse(await f.text()));F=S=L=0;K=15;dirty();render();syncPalettePresetUI(true);setStatus('Project loaded')}catch(err){alert('Invalid project')}};
 ['vdp','screen','size','mag'].forEach(id=>$(id).onchange=e=>{P[id]=id==='vdp'?e.target.value:+e.target.value;L=0;dirty();render()});
@@ -33,6 +33,12 @@ $('clear').onclick=()=>{let n=sz();for(let y=0;y<n;y++)for(let x=0;x<n;x++)layer
 $('limit').onchange=drawScene;$('saveImage').onclick=savePreviewImage;
 let preview=$('screenCanvas');preview.oncontextmenu=e=>e.preventDefault();preview.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse'&&e.button!==0&&e.button!==2)return;e.preventDefault();changePreviewScale(e.button===2?-1:1)});
 $('expPat').onclick=()=>dl(patBytes(),'patterns.bin');$('expCol').onclick=()=>dl(colBytes(),'colors.bin');$('expSat').onclick=()=>dl(satBytes(),'sat.bin');$('expPal').onclick=()=>dl(paletteBytes(),'palette.bin');
-$('expAsm').onclick=()=>{let arr=[...patBytes()],txt='; Pixlverse V9938/V9958 Sprite Mode 2\nsprite_patterns:\n'+arr.map((v,i)=>(i%16?'':'\n  db ')+'$'+v.toString(16).padStart(2,'0')).join(',').replace(/,\n/g,'\n');dl(txt,'sprites.asm','text/plain')};
+$('expAsm').onclick=()=>{let arr=[...patBytes()],txt='; Pixieverse V9938/V9958 Sprite Mode 2\nsprite_patterns:\n'+arr.map((v,i)=>(i%16?'':'\n  db ')+'$'+v.toString(16).padStart(2,'0')).join(',').replace(/,\n/g,'\n');dl(txt,'sprites.asm','text/plain')};
 window.addEventListener('keydown',e=>{if(/INPUT|SELECT/.test(e.target.tagName))return;let k=e.key.toLowerCase();if(k==='p')toolset('pencil');if(k==='e')toolset('eraser');if(k==='+'||k==='=')changeEditorZoom(1);if(k==='-'||k==='_')changeEditorZoom(-1)});
-try{P=migrate(JSON.parse(localStorage.pixlverse));if(!P.frames)throw 0;render();syncPalettePresetUI(true);setStatus('Restored autosave')}catch(e){defaultProject();render();syncPalettePresetUI(true);setStatus('Ready')}
+try{
+  const current=localStorage.getItem(STORAGE_KEY),legacy=current?null:localStorage.getItem(LEGACY_STORAGE_KEY),saved=current||legacy;
+  if(!saved)throw 0;
+  P=migrate(JSON.parse(saved));if(!P.frames)throw 0;render();syncPalettePresetUI(true);
+  if(legacy)localStorage.setItem(STORAGE_KEY,JSON.stringify(P));
+  setStatus(legacy?'Restored autosave · migrated from Pixlverse':'Restored autosave');
+}catch(e){defaultProject();render();syncPalettePresetUI(true);setStatus('Ready')}
