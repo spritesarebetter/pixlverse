@@ -10,33 +10,32 @@ A browser-based sprite editor for MSX2 / MSX2+ hardware using the Yamaha V9938 a
 
 Pixieverse targets Sprite Mode 2 and keeps the hardware representation as the source of truth:
 
-- customizable composite artboard size
-- fixed editor viewport with independent sprite-editor zoom
+- 16×16 or 8×8 Sprite Size selected directly in the Composite sprite editor
+- fixed editor viewport with independent 10% sprite-editor zoom steps
 - Aseprite-inspired separation of frames and layers
 - each layer maps to one real VDP hardware sprite / SAT entry
 - overlapping hardware-sprite layers for multicolor/composite characters
-- per-layer X/Y offsets inside the composite canvas
-- independent scene X/Y placement for the whole composite in the VDP preview
+- per-layer X/Y offsets
+- independent scene X/Y placement in the VDP preview
 - layer visibility, duplication, deletion and SAT priority ordering
-- 8×8 and 16×16 hardware sprites
 - V9938/V9958 1-bit sprite pattern masks
-- per-scanline color attributes
-- EC, CC and IC flags
+- rectangular selection tool with copy/paste and keyboard movement
+- selection-aware move, flip, invert and clear operations
+- double-click / double-tap pixel erase
+- compact per-scanline color controls beside the sprite: palette index, swatch and OR flag
 - up to 32 SAT entries
-- 8-sprites-per-scanline load visualization
+- optional 8-sprites-per-scanline load visualization
 - optional simulation of hiding the 9th+ sprite
 - editable 16-entry V9938/V9958 RGB3 palette
 - Aseprite-shipped palette presets including DawnBringer DB16, Arne16, JMP, PICO-8 and Commodore 64
-- Aseprite-compatible GIMP Palette (`.gpl`) save/load for custom palettes
-- browser-local saved palette library using `localStorage`
+- browser-local custom palette library plus Aseprite-compatible GIMP Palette (`.gpl`) save/load
 - `palette.bin` export in V9938 palette-register format
-- multiple animation frames with per-frame wait counters
-- frame reordering
-- looping VDP animation preview on a 60 Hz timing base
+- multiple animation frames with per-frame 60 Hz wait values and preview playback
 - project autosave in browser storage, with migration from the legacy Pixlverse storage key
 - `.msxsprite` project save/load with migration from the earlier absolute-position format
-- PNG export of the VDP preview at the selected integer preview zoom
+- PNG export of the VDP preview at the selected percentage zoom
 - `patterns.bin`, `colors.bin`, `sat.bin` and Z80 assembly export
+- responsive layouts for desktop, tablets and narrow screens
 - mouse, touch and stylus drawing
 
 ## Run locally
@@ -53,14 +52,23 @@ and visit `http://localhost:8000`.
 
 ## Drawing controls
 
-- Left-click / drag on the artboard: draw on the selected layer
-- Right-click / drag on the artboard: erase on the selected layer
+- Left-click / drag on the sprite: draw on the selected layer
+- Right-click / drag: erase
+- Double-click / double-tap: erase a pixel
 - `P`: pencil
 - `E`: eraser
-- `+` / `-`: editor zoom
+- `S`: selection tool
+- `+` / `-`: editor zoom in 10% steps
 - Ctrl + mouse wheel over the editor: editor zoom
-- Layer arrow controls: move the selected hardware sprite within the composite canvas
-- Bitmap arrow controls: shift pixels inside the selected hardware sprite
+- Arrow buttons: move selected pixels when a selection exists; otherwise shift the complete bitmap
+- Keyboard arrow keys: move the active selection
+- Ctrl/Cmd+C and Ctrl/Cmd+V: copy/paste selected pixels
+- Flip, Invert and Clear operate on the selection when one exists
+- Layer arrow controls: move the selected hardware sprite
+
+## Sprite color controls
+
+The compact color rows next to the sprite correspond to its hardware scanlines. Each row exposes a two-digit palette index, a color swatch and an **OR** checkbox. OR maps to the V9938/V9958 combine-color (CC) flag. Legacy EC and IC values remain preserved in loaded project data for compatibility, but are not exposed by the simplified editor UI.
 
 ## Animation controls
 
@@ -75,20 +83,21 @@ Each frame has a `wait` value measured in 60 Hz display frames. For example, `wa
 
 The active palette is always stored as 16 legal V9938/V9958 colors with 3-bit R, G and B components. Aseprite presets and imported 8-bit RGB palettes are quantized to that hardware color space.
 
-Custom palettes can be saved as `.gpl` files and loaded again in Pixieverse or Aseprite. They can also be saved directly inside Pixieverse with **Save in tool**. These palettes are stored in the browser's local storage and remain available across Pixieverse projects on that browser. Clearing site/browser storage will remove them, so `.gpl` remains the portable backup format.
-
-Imported palettes with more than 16 colors use the first 16 entries; shorter palettes keep the remaining current entries.
+Custom palettes can be stored inside Pixieverse using browser local storage, or saved as `.gpl` files and loaded again in Pixieverse or Aseprite. Clearing the browser's site data also clears palettes saved only inside the tool.
 
 ## VDP preview controls
 
-- Left-click preview: zoom in by one integer step (1×, 2×, 3×, ...)
-- Right-click preview: zoom out by one integer step
-- Save image: export the current VDP preview as a nearest-neighbor PNG at the current preview zoom
-- The VDP preview panel is sized equally with the composite editor panel
+- `+` / `-`: zoom in 10% steps
+- Left-click / tap preview: zoom in 10%
+- Right-click preview: zoom out 10%
+- Ctrl + mouse wheel over the preview: zoom
+- Start / Stop: loop animation on a 60 Hz timing base using each frame's wait value
+- Scanline load: optional hardware-limit visualization, hidden by default
+- Save image: export the current preview as a nearest-neighbor PNG
 
 ## Hardware notes
 
-The customizable canvas is an editor-side composite artboard; it does not create non-standard VDP sprite sizes. Every layer remains a legal 8×8 or 16×16 hardware sprite. Layer order maps to SAT priority, with layer #0 having the highest priority.
+Sprite Size is always a legal VDP hardware size: 8×8 or 16×16. Every layer remains one real hardware sprite. Layer order maps to SAT priority, with layer #0 having the highest priority.
 
 For 16×16 sprites, pattern numbers are aligned to four-pattern groups. Binary export uses the V9938 quadrant ordering and exports a 2048-byte pattern table, 512-byte Sprite Mode 2 color table, 128-byte sprite attribute table, and optional 32-byte palette table for the current project/frame.
 
