@@ -1,0 +1,87 @@
+/* Pixieverse responsive shell: desktop, tablets, odd aspect ratios, and touch devices */
+html,body{width:100%;max-width:100%}
+body{min-width:0}
+main{min-width:0;grid-template-areas:"left mid right";grid-template-columns:minmax(220px,244px) minmax(0,1fr) minmax(280px,338px);height:calc(100dvh - 92px)}
+main>aside:first-child{grid-area:left}
+main>.mid{grid-area:mid;min-width:0}
+main>aside:last-child{grid-area:right}
+.panel,.mid,.editorpanel,.previewpanel,.editorwrap,.preview,.previewleft,.screenbox{min-width:0}
+header{padding-left:max(14px,env(safe-area-inset-left));padding-right:max(14px,env(safe-area-inset-right));padding-top:max(9px,env(safe-area-inset-top))}
+footer{padding-left:max(14px,env(safe-area-inset-left));padding-right:max(14px,env(safe-area-inset-right));padding-bottom:max(9px,env(safe-area-inset-bottom))}
+
+/* Landscape tablets and compact laptops: keep the editor central, stack side panels on the left. */
+@media (max-width:1180px) and (min-width:801px){
+  body{overflow:auto}
+  main{grid-template-areas:"left mid" "right mid";grid-template-columns:minmax(220px,30vw) minmax(0,1fr);grid-template-rows:auto auto;height:auto;min-height:calc(100dvh - 92px);align-items:start}
+  main>aside:first-child,main>aside:last-child{max-height:none;overflow:auto}
+  .mid{grid-row:1/3;height:clamp(620px,calc(100dvh - 108px),1100px)}
+  .editorwrap,.screenbox{min-height:220px}
+  .preview{grid-template-columns:minmax(0,1fr) minmax(150px,180px)}
+  .tools{align-items:center}
+}
+
+/* Portrait tablets and narrow windows: a single scrollable column. */
+@media (max-width:800px){
+  body{overflow:auto}
+  header{position:relative;flex-wrap:wrap;gap:8px;align-items:flex-start}
+  header>.tools{width:100%;justify-content:flex-start}
+  main{display:flex;flex-direction:column;gap:8px;height:auto;min-height:0;padding:8px max(8px,env(safe-area-inset-right)) max(8px,env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left));overflow:visible}
+  main>aside:first-child,.mid,main>aside:last-child{width:100%;max-width:none}
+  .panel{overflow:visible}
+  .mid{display:grid;grid-template-rows:minmax(390px,58dvh) minmax(390px,58dvh);height:auto;overflow:visible}
+  .editorpanel,.previewpanel{overflow:hidden}
+  .editorhead>.row,.previewpanel>.row{align-items:flex-start}
+  .editorhead .tools,.previewcontrols{width:100%;justify-content:flex-start}
+  .editorwrap,.screenbox{min-height:260px}
+  footer{position:relative;gap:12px;flex-wrap:wrap}
+}
+
+/* Small portrait devices: stack the scanline graph and simplify dense control grids. */
+@media (max-width:560px){
+  h1{font-size:17px}
+  .sub{max-width:34ch}
+  main{padding:6px}
+  .panel{padding:8px}
+  .mid{grid-template-rows:minmax(380px,62dvh) minmax(560px,80dvh)}
+  .preview{grid-template-columns:1fr;grid-template-rows:minmax(0,1fr) auto}
+  .loadpanel{display:grid;grid-template-columns:auto 1fr;grid-template-areas:"title title" "graph info";column-gap:8px;align-items:start;max-height:250px}
+  .loadpanel h3{grid-area:title}
+  .loadpanel canvas{grid-area:graph}
+  .loadpanel .mono{grid-area:info;white-space:pre-wrap}
+  .screenbox{min-height:245px}
+  .tools,.buttonrow,.previewcontrols{gap:6px}
+  .palette{grid-template-columns:repeat(8,minmax(24px,1fr));min-width:0}
+  .linehead,.linerow{grid-template-columns:30px minmax(48px,1fr) 28px 28px 28px}
+}
+
+@media (max-width:420px){
+  .grid{grid-template-columns:1fr}
+  .span2{grid-column:auto}
+  .export{grid-template-columns:1fr}
+  .palette{grid-template-columns:repeat(4,1fr)}
+  .rgbinputs{grid-template-columns:1fr}
+  .rgbinputs label{grid-template-columns:18px 1fr}
+  .frameitem{grid-template-columns:1fr}
+  .framewait{justify-content:flex-start}
+}
+
+/* Better tap targets without bloating mouse/keyboard layouts. */
+@media (pointer:coarse){
+  button{min-height:40px;padding:8px 11px}
+  input,select{min-height:38px}
+  .eye{min-width:38px}
+  .sw{height:32px;min-height:32px}
+  .framewait input{width:72px}
+  .linerow{min-height:40px}
+  .linerow input[type="checkbox"]{width:22px;height:22px}
+  #editorZoomIn,#editorZoomOut{min-width:42px}
+}
+
+/* Very short landscape screens remain usable through internal scrolling. */
+@media (max-height:650px) and (min-width:801px){
+  header{padding-top:6px;padding-bottom:6px}
+  main{height:auto;min-height:calc(100dvh - 80px)}
+  .mid{height:max(560px,calc(100dvh - 86px))}
+  .panel{padding:8px}
+  footer{padding-top:5px;padding-bottom:5px}
+}
