@@ -4,10 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Pixieverse — MSX2 Sprite Editor</title>
-<link rel="stylesheet" href="styles.css?v=20260906g">
-<link rel="stylesheet" href="palette-presets.css?v=20260906g">
-<link rel="stylesheet" href="app-features.css?v=20260906g">
-<link rel="stylesheet" href="responsive.css?v=20260906h">
+<link rel="stylesheet" href="styles.css?v=20260906i">
+<link rel="stylesheet" href="palette-presets.css?v=20260906i">
+<link rel="stylesheet" href="app-features.css?v=20260906i">
+<link rel="stylesheet" href="responsive.css?v=20260906i">
+<link rel="stylesheet" href="app-editing.css?v=20260906i">
 </head>
 <body>
 <header>
@@ -82,23 +83,23 @@
           <div><h2 id="title">Composite sprite editor</h2><p id="canvasInfo" class="canvasmeta"></p></div>
           <div class="tools">
             <button id="editorZoomIn" title="Zoom in">+</button><button id="editorZoomOut" title="Zoom out">−</button><span id="editorZoom" class="zoombadge">100%</span>
-            <button id="pencil" class="on">✎ Pencil</button><button id="eraser">⌫ Eraser</button>
-            <span class="toolbarlabel">bitmap</span><button id="left">←</button><button id="right">→</button><button id="up">↑</button><button id="down">↓</button>
+            <button id="pencil" class="on">✎ Pencil</button><button id="eraser">⌫ Eraser</button><button id="selectTool">▣ Select</button><button id="copyPixels" disabled>Copy</button><button id="pastePixels" disabled>Paste</button><button id="clearSelection">Deselect</button><span id="selectionInfo" class="selectioninfo">none</span>
+            <button id="left">←</button><button id="right">→</button><button id="up">↑</button><button id="down">↓</button>
             <button id="flipH">Flip H</button><button id="flipV">Flip V</button><button id="invert">Invert</button><button id="clear">Clear</button>
           </div>
         </div>
-        <p class="hint">All visible layers are composited. Drawing changes only the selected hardware-sprite layer. Left-drag draws; right-drag erases.</p>
+        <p class="hint">Left-drag draws; right-drag erases. Double-click/double-tap a pixel to erase it. Select a rectangle to make shift, flip, invert and clear operate only inside it. Ctrl/Cmd+C and Ctrl/Cmd+V copy/paste the selection.</p>
       </div>
       <div id="editorWrap" class="editorwrap"><canvas id="editor" class="artboardshadow"></canvas></div>
     </div>
 
-    <div class="panel previewpanel">
+    <div id="previewPanel" class="panel previewpanel scanline-hidden">
       <div class="row wrap">
         <div><h2>VDP scene preview</h2><p id="previewInfo" class="hint"></p></div>
-        <div class="previewcontrols"><button id="startAnim">Start</button><button id="stopAnim" disabled>Stop</button><button id="saveImage">Save image</button><span id="previewZoom" class="zoombadge">1×</span><label class="hint"><input id="limit" type="checkbox" checked> hide 9th+ sprite</label></div>
+        <div class="previewcontrols"><button id="startAnim">Start</button><button id="stopAnim" disabled>Stop</button><button id="previewZoomIn" title="Zoom in">+</button><button id="previewZoomOut" title="Zoom out">−</button><span id="previewZoom" class="zoombadge">100%</span><button id="saveImage">Save image</button><label class="hint"><input id="showScanline" type="checkbox"> scanline load</label><label class="hint"><input id="limit" type="checkbox" checked> hide 9th+ sprite</label></div>
       </div>
       <div class="preview">
-        <div class="previewleft"><div class="screenbox"><canvas id="screenCanvas" width="256" height="212" title="Left-click: zoom in · Right-click: zoom out"></canvas></div><p class="hint previewhint">Animation runs on a 60 Hz timing base. Left-click preview: zoom in · Right-click: zoom out</p></div>
+        <div class="previewleft"><div class="screenbox"><canvas id="screenCanvas" width="256" height="212" title="Left-click/tap: zoom in 10% · Right-click: zoom out 10% · Ctrl+wheel: zoom"></canvas></div><p class="hint previewhint">Animation runs on a 60 Hz timing base. Left-click/tap zooms +10%; right-click zooms −10%; Ctrl+wheel also zooms.</p></div>
         <div class="loadpanel"><h3>Scanline load</h3><canvas id="loadCanvas" width="180" height="212"></canvas><p id="loadInfo" class="mono"></p></div>
       </div>
     </div>
@@ -132,10 +133,11 @@
   </aside>
 </main>
 <footer><span>Aseprite-inspired workflow · MSX hardware remains the source of truth</span><span id="status">Ready</span></footer>
-<script src="app-core.js?v=20260906g"></script>
-<script src="palette-presets.js?v=20260906g"></script>
-<script src="app-canvas.js?v=20260906g"></script>
-<script src="app-ui.js?v=20260906g"></script>
-<script src="app-features.js?v=20260906g"></script>
+<script src="app-core.js?v=20260906i"></script>
+<script src="palette-presets.js?v=20260906i"></script>
+<script src="app-canvas.js?v=20260906i"></script>
+<script src="app-ui.js?v=20260906i"></script>
+<script src="app-features.js?v=20260906i"></script>
+<script src="app-editing.js?v=20260906i"></script>
 </body>
 </html>
